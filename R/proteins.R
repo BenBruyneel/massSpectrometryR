@@ -14,7 +14,7 @@ is.Class <- function(object, whichClass){
 #' @title Generates a pre-defined (incomplete) table of names of fragments for
 #'  the ions resulting when fragmenting a peptide in MS
 #' @note will possibly be removed in the future
-#' 
+#'
 #' @return a data.frame of two columns: 'name' and 'series name' of fragments
 #' @export
 peptideFragments <- function(){
@@ -35,9 +35,9 @@ peptideFragments <- function(){
 
 # ---- general - calculations ----
 
-#' @title peptideToFormula
-#' @description gives formula of a peptide string c(C=x,H=y,etc etc)
-#' 
+#' @title peptideFormula
+#' @description gives formula of a peptide string
+#'
 #' @note does not check for non-amino acid letters, modifications cannot be
 #'  specified
 #'
@@ -50,8 +50,8 @@ peptideFragments <- function(){
 #' @export
 #'
 #' @examples
-#' peptideToFormula("SAMPLER")
-peptideToFormula <- function(peptide, aminoAcids = aminoAcidResidues()){
+#' peptideFormula("SAMPLER")
+peptideFormula <- function(peptide, aminoAcids = aminoAcidResidues()){
   peptide <- unlist(stringr::str_split(toupper(peptide),pattern = ""))
   temporary <- lapply(peptide, aminoAcids$getFormula)
   # need to add 1 x water
@@ -63,12 +63,12 @@ peptideToFormula <- function(peptide, aminoAcids = aminoAcidResidues()){
 }
 
 
-#' @title peptideMassToMz
-#' @description gives ion m/z of a peptide string c(C=x,H=y,etc etc)
+#' @title peptideMzH
+#' @description gives ion m/z of the protonated peptide
 #'
 #' @note does not check for non-amino acid letters, modifications cannot be
 #'  specified
-#'  
+#'
 #' @param peptide character vector specifying the sequence of amino acids in a
 #'  peptide
 #' @param charge numeric vector specifying the charge of the peptide ion
@@ -81,13 +81,13 @@ peptideToFormula <- function(peptide, aminoAcids = aminoAcidResidues()){
 #' @export
 #'
 #' @examples
-#' peptideMassToMz("SAMPLER")
-#' peptideMassToMz("SAMPLER", charge = 2)
-#' peptideMassToMz("SAMPLER", elementsInfo = elementsAverage())
-peptideMassToMz <- function(peptide, charge = 1,
-                            aminoAcids = aminoAcidResidues(),
-                            elementsInfo = elementsMonoisotopic()){
-  peptideToFormula(peptide, aminoAcids = aminoAcids) |>
+#' peptideMzH("SAMPLER")
+#' peptideMzH("SAMPLER", charge = 2)
+#' peptideMzH("SAMPLER", elementsInfo = elementsAverage())
+peptideMzH <- function(peptide, charge = 1,
+                       aminoAcids = aminoAcidResidues(),
+                       elementsInfo = elementsMonoisotopic()){
+  peptideFormula(peptide, aminoAcids = aminoAcids) |>
     formulaToMass(elementsInfo = elementsInfo) |>
     massToMzH(charge = charge, elementsInfo = elementsInfo)
 }
@@ -96,7 +96,7 @@ peptideMassToMz <- function(peptide, charge = 1,
 #' @title counts the occurence of a amino acid (sequence) in another amino acid
 #'  sequence
 #'
-#' @param thePeptide character vector, the peptide to be searched 
+#' @param thePeptide character vector, the peptide to be searched
 #' @param searchPeptide character vector, the amino acid sequence to search for
 #' @param doNotSplice if FALSE the all characters in the searchPeptide are
 #'  searched individually.If TRUE then the searchPeptide is searched as a whole.
@@ -115,7 +115,7 @@ peptideCount <- function(thePeptide = NA, searchPeptide = NA, doNotSplice = TRUE
   if (!(is.na(thePeptide) | (identical(searchPeptide,NA)))){
     if (upper){
       thePeptide <- toupper(thePeptide)
-      searchPeptide <- toupper(searchPeptide)        
+      searchPeptide <- toupper(searchPeptide)
     }
     if (length(searchPeptide) == 1){
       if (doNotSplice){
@@ -134,13 +134,13 @@ peptideCount <- function(thePeptide = NA, searchPeptide = NA, doNotSplice = TRUE
 # ---- modifications ----
 
 #' R6 Class representing a set of modifications for the aminoacids in peptides
-#' 
-#' @description 
+#'
+#' @description
 #' Every modification inside the object has a name, position, fixed (flag),
 #'  gain (formula), loss (formula) and category.
-#'  
+#'
 #' 'name' is a character vector.
-#' 
+#'
 #'  Position is a character vector specifying the amino acids which always have
 #'   the modification (fixed = TRUE) or can have the modification (fixed =
 #'   FALSE). More than one amino acid can be specified, eg NQ (for  Asparagine &
@@ -148,22 +148,22 @@ peptideCount <- function(thePeptide = NA, searchPeptide = NA, doNotSplice = TRUE
 #'   'exotic' amino acids (eg Selenocysteine) or 'combination' letters, such as
 #'   'J' (Leucine or Isoleucine). For the C- and N-terminus, use 'C_Term' or
 #'   'N_Term' for position.
-#'   
+#'
 #'  Gain and loss specify what is lost and/or gained when a amino acid is
 #'   modified. For example Carbamidomethylation of Cysteine has both a loss
 #'   formula c(H=1) and a gain formula c(C=2, H=4, N=1, O=1); obviously this
 #'   could also be defined as: loss formula = emptyFormula(), gain formula =
 #'   c(C=2, H=3, N=1, O=1).
-#'   
+#'
 #'   For the category field (character vector) there is no real 'rule' on how to
 #'   classify modifications. I usually stick to the categorisation of Mascot or
 #'   Sequest.
-#'   
+#'
 #' @note the logical vector fixed is very important. If TRUE, then a
 #'  modification is considered to be always present, if FALSE then its presence
-#'  is optional. 
-#'   
-#' @examples 
+#'  is optional.
+#'
+#' @examples
 #' aaModifications <- modifications$new()
 #' aaModifications$addTable(
 #'   tibble::tibble(
@@ -197,7 +197,7 @@ modifications <- R6Class("modifications",
                            modificationTable = tibble::tibble()
                          ),
                          public = list(
-                           #' @description 
+                           #' @description
                            #' Create a new modifications object
                            #' @param data default = NA. If not NA, then should be a tibble with 6 columns: name, position,
                            #'  fixed, gain, loss and category. This is checked, but the contents of each column are
@@ -226,7 +226,7 @@ modifications <- R6Class("modifications",
                                }
                              }
                            },
-                           #' @description 
+                           #' @description
                            #'  Adds a single modification
                            #'
                            #' @param name character vector
@@ -236,7 +236,7 @@ modifications <- R6Class("modifications",
                            #' @param gain named numeric vector (formula) that specifies what (atoms) are gained
                            #'  when a modification is applied to an amino acid
                            #' @param loss named numeric vector (formula) that specifies what (atoms) are lost
-                           #'  when a modification is applied to an amino acid 
+                           #'  when a modification is applied to an amino acid
                            #' @param category character vector. Not rigidly defined: for user to be able to
                            #'  select/filter etc which type of modifications to use
                            #'
@@ -255,7 +255,7 @@ modifications <- R6Class("modifications",
                                               category = category))
                              invisible(self)
                            },
-                           #' @description 
+                           #' @description
                            #'  Add (a set of) modifications via a tibble
                            #'
                            #' @param data default = NA. If not NA, then should be a tibble with 6 columns: name, position,
@@ -319,20 +319,20 @@ modifications <- R6Class("modifications",
                              }
                            }
                          )
-)                        
+)
 
 #' @title Returns a pre-defined object which contains info on some common
 #'  amino acid modifications
-#'  
+#'
 #' @note the resulting modification table cannot be used immediately: there is
 #'  two times a fixed modification for Cysteine amino acids. Remove one of them
 #'  to prevent errors when using peptide calculations
-#'  
+#'
 #' @return An object of class modifications containing info on amino acid
 #'  modifications
 #' @examples
 #' print(aminoAcidModifications)
-#' 
+#'
 #' @export
 aminoAcidModifications <- function(){
   return(
@@ -372,7 +372,7 @@ aminoAcidModifications <- function(){
 # ---- peptide ----
 
 #' R6 Class representing a (single) peptide
-#' 
+#'
 #' @description
 #'  Contains two character vectors: one representing the amino acid sequence,
 #'  and a second conatining info on the positions of 'variable' modifications.
@@ -383,8 +383,8 @@ aminoAcidModifications <- function(){
 #'                            modificationTable = aminoAcidModifications()$table,
 #'                            variableModifications = "0010000")
 #' testPeptide
-#' testPeptide$formula()                          
-#' @export  
+#' testPeptide$formula()
+#' @export
 peptide <- R6Class("peptide",
                    private = list(
                      peptideString = NA,
@@ -401,7 +401,7 @@ peptide <- R6Class("peptide",
                      #' Create a new peptide object
                      #' @param sequence character vector, the amino acid
                      #'  sequence of the peptide
-                     #' @param modificationTable the table from a 
+                     #' @param modificationTable the table from a
                      #'  R6 'modifications' object containing the variable and
                      #'  fixed modifications present in the amino acid sequence
                      #' @param variableModifications character vector specifying
@@ -435,7 +435,7 @@ peptide <- R6Class("peptide",
                        }
                        invisible(self)
                      },
-                     #' @description 
+                     #' @description
                      #' For printing purposes: prints the sequence string, the
                      #'  variable modifications string and the modification
                      #'  table
@@ -455,7 +455,7 @@ peptide <- R6Class("peptide",
                      #' @description
                      #' Retrieve part of the amino acid squence. Note: intended
                      #'  for internal use
-                     #' 
+                     #'
                      #' @param startSeq integer vector, specifies the start of
                      #'  the part of the amino acid sequence to retrieve
                      #' @param endSeq integer vector, specifies the end of the
@@ -477,7 +477,7 @@ peptide <- R6Class("peptide",
                      #' @description
                      #' Retrieve part of the variable modification string.
                      #' Note: intended for internal use
-                     #' 
+                     #'
                      #' @param startSeq integer vector, specifies the start of
                      #'  the part of the variable modification string to
                      #'  retrieve
@@ -497,7 +497,7 @@ peptide <- R6Class("peptide",
                          return(NA)
                        }
                      },
-                     #' @description 
+                     #' @description
                      #' Determines the gain & loss formulas for a part of the
                      #'  peptide (waviable modification string and modification
                      #'  table are used for this): adds up all the losses and
@@ -517,7 +517,7 @@ peptide <- R6Class("peptide",
                      #' @param Cterminal logical vector if TRUE then Cterminal
                      #'  modifications are included (if N-terminus is present in
                      #'  the part selected by startSeq and endSeq)
-                     #' 
+                     #'
                      #' @return a list of 2 formulas: the summed up gain
                      #'  formulas & the summed up loss formulas which are
                      #'  present in the part selected by startSeq and endSeq)
@@ -588,12 +588,12 @@ peptide <- R6Class("peptide",
                                  }
                                }
                              }
-                           } 
+                           }
                          }
                        }
                        return(list(gain = gainFormula,loss = lossFormula))
                      },
-                     #' @description 
+                     #' @description
                      #' Deterines the gain & loss formulas for the full length
                      #'  of the peptide sequence. Essentially a wrapper for
                      #'  modifications.formula.part
@@ -604,7 +604,7 @@ peptide <- R6Class("peptide",
                      #' @param Cterminal logical vector if TRUE then Cterminal
                      #'  modifications are included (if N-terminus is present in
                      #'  the part selected by startSeq and endSeq)
-                     #' 
+                     #'
                      #' @return a list of 2 formulas: the summed up gain
                      #'  formulas & the summed up loss formulas which are
                      #'  present in the part selected by startSeq and endSeq)
@@ -614,10 +614,10 @@ peptide <- R6Class("peptide",
                                                           Nterminal = Nterminal,
                                                          Cterminal = Cterminal))
                      },
-                     #' @description 
+                     #' @description
                      #' Determines the chemical formula of part of the peptide
                      #' with or without the modifications.
-                     #' 
+                     #'
                      #' @param startSeq integer vector, specifies the start of
                      #'  the part of the peptide sequence
                      #' @param endSeq integer vector, specifies the end of the
@@ -640,7 +640,7 @@ peptide <- R6Class("peptide",
                                             Nterminal = TRUE, Cterminal = TRUE){
                        temporary <- self$sequence.part(startSeq, endSeq)
                        #temporarymods <- self$modifications.part(startSeq, endSeq)
-                       temporaryFormula <- peptideToFormula(temporary)
+                       temporaryFormula <- peptideFormula(temporary)
                        if ((!ignoreModifications) &
                            (!identical(private$modificationTable,NA))){
                     modsPresent <- self$modifications.formula.part(startSeq,
@@ -654,7 +654,7 @@ peptide <- R6Class("peptide",
                        }
                        return(temporaryFormula)
                      },
-                     #' @description 
+                     #' @description
                      #' Determines the chemical formula of the full length
                      #'  peptide with or without modifications. Essentially a
                      #'  wrapper around 'formula.part'
@@ -680,7 +680,7 @@ peptide <- R6Class("peptide",
                                                 Nterminal = Nterminal,
                                                 Cterminal = Cterminal))
                      },
-                     #' @description 
+                     #' @description
                      #' Calculate the mass of part of the peptide with or
                      #'  without modifications
                      #'
@@ -714,7 +714,7 @@ peptide <- R6Class("peptide",
                                                 Cterminal = Cterminal) |>
                                 formulaToMass(elementsInfo = elementsInfo))
                      },
-                     #' @description 
+                     #' @description
                      #' Calculate the mass of the full length peptide with or
                      #'  without modifications
                      #'
@@ -742,9 +742,9 @@ peptide <- R6Class("peptide",
                                                 Nterminal = Nterminal,
                                                 Cterminal = Cterminal) |>
                                 formulaToMass(elementsInfo = elementsInfo))
-                       
+
                      },
-                     #' @description 
+                     #' @description
                      #' Calculate the m/z of part of the peptide (as an ion)
                      #'  with or without modifications
                      #'
@@ -772,7 +772,7 @@ peptide <- R6Class("peptide",
                      #'  the adduct
                      #' @param adductCharge numeric vector indicating the actual
                      #'  charge per adduct
-                     #'  
+                     #'
                      #' @return numeric vector
                      mz.part = function(startSeq = 1, endSeq = 1,
                                         ignoreModifications = FALSE,
@@ -792,7 +792,7 @@ peptide <- R6Class("peptide",
                                     elementsInfo = elementsInfo)
                        )
                      },
-                     #' @description 
+                     #' @description
                      #' Calculate the m/z of the full length peptide (as an ion)
                      #'  with or without modifications
                      #'
@@ -816,7 +816,7 @@ peptide <- R6Class("peptide",
                      #'  the adduct
                      #' @param adductCharge numeric vector indicating the actual
                      #'  charge per adduct
-                     #'  
+                     #'
                      #' @return numeric vector
                      mz = function(ignoreModifications = FALSE,
                                    Nterminal = TRUE, Cterminal = TRUE,
@@ -834,10 +834,10 @@ peptide <- R6Class("peptide",
                          adductCharge = adductCharge)
                        )
                      },
-                     #' @description 
+                     #' @description
                      #' Calculate the m/z of part of the peptide (as a
                      #'  protonated ion) with or without modifications
-                     #'  
+                     #'
                      #' @param startSeq integer vector, specifies the start of
                      #'  the part of the peptide sequence
                      #' @param endSeq integer vector, specifies the end of the
@@ -856,7 +856,7 @@ peptide <- R6Class("peptide",
                      #' @param charge charge state
                      #' @param elementsInfo elements masses to be used, needs to
                      #'  be of class elements, default is elementsMonoisotopic()
-                     #' 
+                     #'
                      #' @return numeric vector
                      mzH.part = function(startSeq = 1, endSeq = 1,
                                          ignoreModifications = FALSE,
@@ -875,10 +875,10 @@ peptide <- R6Class("peptide",
                                       adductCharge = 1)
                        )
                      },
-                     #' @description 
+                     #' @description
                      #' Calculate the m/z of part of the peptide (as a
                      #'  protonated ion) with or without modifications
-                     #'  
+                     #'
                      #' @param charge charge state
                      #' @param ignoreModifications if FALSE then modifications
                      #'  (both fixed & variable) are taken into account when
@@ -893,7 +893,7 @@ peptide <- R6Class("peptide",
                      #'  the part selected by startSeq and endSeq)
                      #' @param elementsInfo elements masses to be used, needs to
                      #'  be of class elements, default is elementsMonoisotopic()
-                     #' 
+                     #'
                      #' @return numeric vector
                      mzH = function(charge = 1,
                                     ignoreModifications = FALSE,
@@ -917,7 +917,7 @@ peptide <- R6Class("peptide",
                      #'  check whether a fragment is possible at all. Prime
                      #'  example is the B+H2O ion series: these fragment ions
                      #'  can only if certain conditions are met. Currently there
-                     #'  is no check in this function that checks these 
+                     #'  is no check in this function that checks these
                      #'  conditions/assumptions
                      #'
                      #' @param startSeq integer vector, specifies the start of
@@ -996,7 +996,7 @@ peptide <- R6Class("peptide",
                                                              function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(C=1,H=4,O=3)) %>% formulaToMass()})) %>% massToMzH(chargeState)
                          # a - NH3
                          pepSeries$aionsNH3 <- unlist(lapply(1:nrow(pepSeries),
-                                                             function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(C=1,H=5,O=2,N=1)) %>% formulaToMass()})) %>% massToMzH(chargeState)                                   
+                                                             function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(C=1,H=5,O=2,N=1)) %>% formulaToMass()})) %>% massToMzH(chargeState)
                          # calculate b-ions masses (not m/z's!!)
                          pepSeries$bions <- unlist(lapply(1:nrow(pepSeries),
                                                           function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(H=2,O=1)) %>% formulaToMass()})) %>% massToMzH(chargeState)
@@ -1134,7 +1134,7 @@ peptide <- R6Class("peptide",
                      #'  the part of the peptide sequence
                      #' @param endSeq integer vector, specifies the end of the
                      #'  part of the peptide sequence
-                     #'  
+                     #'
                      #' @return numeric vector
                      fragments.part.immoniumIons = function(startSeq = 1,
                                                             endSeq = 1){
@@ -1149,13 +1149,13 @@ peptide <- R6Class("peptide",
                                             "D" =  88.0393,    # C3 H6 N1 O2
                                             "E" = 102.0550,    # C4 H8 N1 O2
                                             "F" = 120.0808,    # C8 H10 N1
-                                            "H" =  88.0393,    # C5 H8 N3 
+                                            "H" =  88.0393,    # C5 H8 N3
                                             "I" =  86.0964,    # C5 H12 N1
                                             "K" =  c(84.0808, 101.1073),    # C5 H10 N1, C5 H13 N2
                                             "L" =  86.0964,    # C5 H12 N1
                                             "M" = 104.0528,    # C4 H10 N1 S1
                                             "N" =  87.0553,    # C3 H7 N2 O1
-                                            "P" = c(70.0651, 126.0550),     # C4 H8 N1, C6 H8 N1 O2 
+                                            "P" = c(70.0651, 126.0550),     # C4 H8 N1, C6 H8 N1 O2
                                             "Q" = c(84.0444, 101.0709),     # C4 H6 N1 O1, C4 H9 N2 O1
                                             "R" = c(70.0651,87.0917,100.0869,112.0869),    # C4 H8 N1, C4 H11 N2, C4 H10 N3, C5 H10 N3
                                             "S" =  60.0444,    # C2 H6 N1 O1
@@ -1212,7 +1212,7 @@ peptide <- R6Class("peptide",
                        } else {
                          # do nothing
                        }
-                       
+
                      },
                      #' @field modifications returns the moficiations string,
                      #'  can be set but is not checked agains the length of the

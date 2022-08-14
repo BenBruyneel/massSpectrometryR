@@ -14,22 +14,22 @@ test_that("peptideFragments works",{
   expect_equal(peptideFragments()$series[12], "y-NH3")
 })
 
-test_that("peptideToFormula works",{
-  expect_equal(peptideToFormula("SAMPLER"), c(C=33, H=58, N=10, O=11, S=1))
-  expect_equal(peptideToFormula("SAMPLEr"), c(C=33, H=58, N=10, O=11, S=1))
-  expect_equal(peptideToFormula("SAMPLE"), c(C=27, H=46, N=6, O=10, S=1))
+test_that("peptideFormula works",{
+  expect_equal(peptideFormula("SAMPLER"), c(C=33, H=58, N=10, O=11, S=1))
+  expect_equal(peptideFormula("SAMPLEr"), c(C=33, H=58, N=10, O=11, S=1))
+  expect_equal(peptideFormula("SAMPLE"), c(C=27, H=46, N=6, O=10, S=1))
 })
 
-test_that("massToMzPeptide works",{
-  expect_equal(format(peptideMassToMz("SAMPLER", charge = 1),
+test_that("peptideMzH works",{
+  expect_equal(format(peptideMzH("SAMPLER", charge = 1),
                       digits = 8, nsmall = 4),"803.4080")
-  expect_equal(format(peptideMassToMz("SAMPLER", charge = 2),
+  expect_equal(format(peptideMzH("SAMPLER", charge = 2),
                digits = 8, nsmall = 4),"402.20764")
-  expect_equal(format(peptideMassToMz("SAMPLER", charge = 3),
+  expect_equal(format(peptideMzH("SAMPLER", charge = 3),
                digits = 8, nsmall = 4),"268.47418")
-  expect_equal(format(peptideMassToMz("SAMPLER",
-                                      charge = 1,
-                                      elementsInfo = elementsAverage()),
+  expect_equal(format(peptideMzH("SAMPLER",
+                                 charge = 1,
+                                 elementsInfo = elementsAverage()),
                       digits = 8, nsmall = 4), "803.9439")
 })
 

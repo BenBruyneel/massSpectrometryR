@@ -14,7 +14,7 @@ testPeptide <- peptide$new(sequence = "SAMPLER",
                            modificationTable = aminoAcidModifications()$table,
                            variableModifications = "0010000")
 testPeptide
-testPeptide$formula()                          
+testPeptide$formula()
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -75,7 +75,7 @@ Create a new peptide object
 \item{\code{sequence}}{character vector, the amino acid
 sequence of the peptide}
 
-\item{\code{modificationTable}}{the table from a 
+\item{\code{modificationTable}}{the table from a
 R6 'modifications' object containing the variable and
 fixed modifications present in the amino acid sequence}
 
@@ -645,7 +645,7 @@ generates a table of fragments which could
  check whether a fragment is possible at all. Prime
  example is the B+H2O ion series: these fragment ions
  can only if certain conditions are met. Currently there
- is no check in this function that checks these 
+ is no check in this function that checks these
  conditions/assumptions
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{peptide$fragments.part(

@@ -6,7 +6,7 @@
 \description{
 Every modification inside the object has a name, position, fixed (flag),
  gain (formula), loss (formula) and category.
- 
+
 'name' is a character vector.
 
  Position is a character vector specifying the amino acids which always have
@@ -16,13 +16,13 @@ Every modification inside the object has a name, position, fixed (flag),
   'exotic' amino acids (eg Selenocysteine) or 'combination' letters, such as
   'J' (Leucine or Isoleucine). For the C- and N-terminus, use 'C_Term' or
   'N_Term' for position.
-  
+
  Gain and loss specify what is lost and/or gained when a amino acid is
   modified. For example Carbamidomethylation of Cysteine has both a loss
   formula c(H=1) and a gain formula c(C=2, H=4, N=1, O=1); obviously this
   could also be defined as: loss formula = emptyFormula(), gain formula =
   c(C=2, H=3, N=1, O=1).
-  
+
   For the category field (character vector) there is no real 'rule' on how to
   classify modifications. I usually stick to the categorisation of Mascot or
   Sequest.
