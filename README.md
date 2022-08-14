@@ -10,4 +10,4 @@ devtools::install_github("BenBruyneel/massSpectrometryR")
 
 Work in progress!
 
-August, 14^th^ 2022
+August, 14th 2022
