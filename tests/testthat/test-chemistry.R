@@ -58,7 +58,7 @@ test_that("subtractformulas & %f-% work",{
                c(C=3, H=3, N=1, O=0, S=0))
   expect_equal(c(C=3, H=5, N=1, O=1, S=0) %f-% c(H=2, O=1),
                c(C=3, H=3, N=1, O=0, S=0))
-  
+
 })
 
 test_that("addListFormulas works",{
@@ -94,7 +94,7 @@ test_that("massToMz works",{
                                adductCharge = 1, elementsInfo = elementsAverage()),
                       digits = 8, nsmall = 4),
                "175.1191")
-  
+
 })
 
 test_that("massToMzH works",{
