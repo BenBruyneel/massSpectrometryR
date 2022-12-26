@@ -709,7 +709,7 @@ peptide <- R6Class("peptide",
                                           elementsInfo = elementsMonoisotopic()){
                        return(self$formula.part(startSeq = startSeq,
                                                 endSeq = endSeq,
-                                                ignoreModifications,
+                                      ignoreModifications = ignoreModifications,
                                                 Nterminal = Nterminal,
                                                 Cterminal = Cterminal) |>
                                 formulaToMass(elementsInfo = elementsInfo))
@@ -738,7 +738,7 @@ peptide <- R6Class("peptide",
                                      elementsInfo = elementsMonoisotopic()){
                        return(self$formula.part(startSeq = 1,
                                                 endSeq = self$length,
-                                                ignoreModifications,
+                                      ignoreModifications = ignoreModifications,
                                                 Nterminal = Nterminal,
                                                 Cterminal = Cterminal) |>
                                 formulaToMass(elementsInfo = elementsInfo))
@@ -866,7 +866,7 @@ peptide <- R6Class("peptide",
                        return(
                          self$mz.part(startSeq = startSeq,
                                       endSeq = endSeq,
-                                      ignoreModifications,
+                                      ignoreModifications = ignoreModifications,
                                       Nterminal = Nterminal,
                                       Cterminal = Cterminal,
                                       elementsInfo = elementsInfo,
@@ -902,7 +902,7 @@ peptide <- R6Class("peptide",
                        return(
                          self$mzH.part(
                            startSeq = 1, endSeq = self$length,
-                           ignoreModifications,
+                           ignoreModifications = ignoreModifications,
                            Nterminal = Nterminal,
                            Cterminal = Cterminal,
                            elementsInfo = elementsInfo,
