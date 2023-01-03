@@ -2,7 +2,7 @@
 % Please edit documentation in R/chemistry.R
 \name{formulaString}
 \alias{formulaString}
-\title{Translates regular formula format into a character vector, eg 
+\title{Translates regular formula format into a character vector, eg
  C6H12O6}
 \usage{
 formulaString(formula)
@@ -14,7 +14,7 @@ formulaString(formula)
 character vector
 }
 \description{
-Translates regular formula format into a character vector, eg 
+Translates regular formula format into a character vector, eg
  C6H12O6
 }
 \examples{

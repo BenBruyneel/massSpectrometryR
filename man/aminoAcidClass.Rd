@@ -18,7 +18,7 @@ aminoAcidResidues()$getName("Leu")
 aminoAcidResidues()$translatePeptide("Asp-Arg-Val-Tyr-Ile-His-Pro-Phe-His-Leu",
  from1to3 = TRUE, splitCharacter ="-")
 aminoAcidResidues()$translatePeptide("DRVYIHPFHL", joinCharacter = "-")
-                                                   
+
 }
 \section{Super class}{
 \code{\link[massSpectrometryR:chemicals]{massSpectrometryR::chemicals}} -> \code{aminoacids}

@@ -19,7 +19,7 @@ randomElements <- elements$new(shorts = c("X1","X2","X3"),
                                           "Secret Element 2",
                                           "Secret Element 1"),
                                mass   = c(301, 312, 323))
-                                                   
+
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

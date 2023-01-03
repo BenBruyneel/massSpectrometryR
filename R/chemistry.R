@@ -1,29 +1,29 @@
 # ---- elements ----
 
 #' R6 Class representing a set of elements
-#' 
+#'
 #' Note: this class is meant to be used for elements.
-#' 
+#'
 #' Warning: all elements inside this object should be unique (names & shorts,
 #'  not mass)
-#' 
-#' @description 
+#'
+#' @description
 #' Every element inside the object has a name, letter and a mass. The first 2
 #'  can be any length of string, mass should be a numeric
-#'  
-#' @examples 
+#'
+#' @examples
 #' randomElements <- elements$new(shorts = c("X1","X2","X3"),
 #'                                names  = c("Secret Element 1",
 #'                                           "Secret Element 2",
 #'                                           "Secret Element 1"),
 #'                                mass   = c(301, 312, 323))
-#'                                                    
+#'
 #' @export
 elements <- R6::R6Class("elements",
                         private = list(
                           # names: the actual names of the elements
                           names_ = NA,
-                          # shorts: the short names for the elements, 
+                          # shorts: the short names for the elements,
                           #  eg Hg for Mercury
                           shorts_ = NA,
                           # mass: the masses for the elements
@@ -157,7 +157,7 @@ elements <- R6::R6Class("elements",
 #'  calculate mass & m/z of ions
 #' @return an elements object
 #' @export
-#' 
+#'
 #' @examples
 #' print(elementsMonoisotopic())
 elementsMonoisotopic <- function(){
@@ -185,7 +185,7 @@ elementsMonoisotopic <- function(){
 #'  calculate mass & m/z of ions
 #' @return an elements object
 #' @export
-#' 
+#'
 #' @examples
 #' print(elementsAverage())
 elementsAverage <- function(){
@@ -258,7 +258,7 @@ elementsInFormula <- function(formula, removeZero = FALSE){
 #' elementsInFormulas(c(O = 2, C = 1),
 #'                    c(H = 2, S = 1))
 elementsInFormulas <- function(formula1, formula2, decrease = FALSE){
-  e1 <- elementsInFormula(formula1)        
+  e1 <- elementsInFormula(formula1)
   e2 <- elementsInFormula(formula2)
   if (!identical(e1,e2)){
     e1 <- unique(append(e1,e2))
@@ -305,7 +305,7 @@ addFormulas <- function(formula1, formula2){
 #' waterFormula() %f+% protonFormula()
 #' waterFormula() %f+% c(C=1, O = 2)
 #' c(H = 2, O = 1) %f+% c(S = 1, O = 2)
-#' 
+#'
 #' @export
 `%f+%` <- addFormulas
 
@@ -352,12 +352,12 @@ subtractFormulas <- function(formula1, formula2){
 #' @examples
 #' c(H = 2, O = 1) %f-% c(H = 1)
 #' c(H = 2, O = 1) %f-% c(S = 1, O = 2)
-#' 
+#'
 #' @export
 `%f-%` <- subtractFormulas
 
 #' @title Add up a list of formulas
-#' 
+#'
 #' @description Take a list of formulas and adds them all up
 #'
 #' @param formulas list of formulas
@@ -459,7 +459,7 @@ massToMz <- function(mass, adducts = 0, adductFormula = electronFormula(),
     # if charger is not an electron, then the (charge * mass(electron)) needs
     # to to be added/subtracted
     if (!identical(adductFormula,electronFormula())){
-      massIon <- massIon - (abs(adductCharge) * adducts * formulaToMass(electronFormula(), 
+      massIon <- massIon - (abs(adductCharge) * adducts * formulaToMass(electronFormula(),
                                                                         elementsInfo = elementsInfo))
     }
     mz <- massIon / (abs(adducts * adductCharge))
@@ -495,13 +495,13 @@ massToMz <- function(mass, adducts = 0, adductFormula = electronFormula(),
 #' massToMzH(lysineMass)
 massToMzH <- function(mass, charge = 1, elementsInfo = elementsMonoisotopic()){
   massToMz(mass, adducts = charge,
-           adductFormula = protonFormula(), adductCharge = 1, 
+           adductFormula = protonFormula(), adductCharge = 1,
            elementsInfo = elementsInfo)
 }
 
 # ---- translations from and to different formats ----
 
-#' @title  Translates regular formula format into a character vector, eg 
+#' @title  Translates regular formula format into a character vector, eg
 #'  C6H12O6
 #'
 #' @param formula named numeric vector, example c(O = 2, C = 1)
@@ -554,7 +554,7 @@ formulaString <- function(formula){
 #' stringFormula("H3O4P1")
 #' stringFormula("C6H12O6")
 stringFormula <- function(string){
-  parts <- stringr::str_extract_all(string, 
+  parts <- stringr::str_extract_all(string,
                                     pattern = "((\\[\\d+\\]){0,1}[:alpha:]+\\-{0,1}\\d*)")[[1]]
   elementsList <- as.character()
   elementsCount <- as.numeric()
@@ -604,6 +604,40 @@ rcdkFormula <- function(cdkformula){
   return(result)
 }
 
+#' @title translates a proteome Discoverer (Thermo Scientific) elements formula string
+#'  to a formula as used by this package
+#'
+#' @param pdFormula a character vector. Formula in a format as used by proteome
+#'  discoverer software
+#'
+#' @return formula of format c(H=2, O=1)
+#' @export
+#'
+#' @examples
+#' glucose <- pdToFormula("C(6) H(12) O(6)")
+#' glucose
+#' water <- pdToFormula("H(2) O")
+#' water
+pdToFormula <- function(pdFormula){
+  if (length(pdFormula) == 1){
+    pdFormula <- stringr::str_split(pdFormula, pattern = " ")[[1]]
+    findWOnumber <- !grepl(pdFormula, pattern = "\\(\\d+\\)")
+    pdFormula[findWOnumber] <- paste(pdFormula[findWOnumber],"(1)", sep = "")
+    pdFormula <- stringr::str_split(
+      stringr::str_replace(pdFormula,
+                           pattern = "\\)",
+                           replacement = ""),
+      pattern = "\\(")
+    pdFormula <- unlist(pdFormula)
+    result <- as.integer(pdFormula[seq(2, length(pdFormula),2)])
+    names(result) <- pdFormula[seq(1, length(pdFormula),2)]
+  } else {
+    result <- purrr::map(pdFormula, ~pdTomsFormula(.x))
+    names(result) <- names(pdFormula)
+  }
+  return(result)
+}
+
 # ---- Standard Formulas ----
 
 #' @title generates a pre-defined formula for proton
@@ -647,24 +681,24 @@ emptyFormula <- function(){
 # ---- chemicals ----
 
 #' R6 Class representing a set of chemicals
-#' 
+#'
 #' Note: this class is meant to be used for classes of compounds, eg amino acids
-#' 
+#'
 #' Also: his class is  meant as a base class to be expanded via inheritance
-#' 
+#'
 #' Warning: all chemicals inside this object should be unique (names, letters &
 #'  shorts)
-#' 
-#' @description 
+#'
+#' @description
 #' Every chemical inside the object has a name, letter, short and a formula.
 #'  The first 3 can be any length of string (though the letter and short field
 #'   should be maximum length (nchar) 1 and 2-4 respectively). Formula should be
 #'   in the form of a named numeric with the names representing elements and the
 #'   values themselves being the number of atoms of that element,
 #'   eg c(C = 3, H =  5, N = 1, O = 1, S = 0)
-#'  
-#' @examples 
-#' estrogens <- chemicals$new(letters = c("1","2","3","4"), 
+#'
+#' @examples
+#' estrogens <- chemicals$new(letters = c("1","2","3","4"),
 #'                            shorts = c("E1","E2","E3","E4"),
 #'                            names = c("Estrone","Estradiol",
 #'                                      "Estriol","Estetrol"),
@@ -672,13 +706,13 @@ emptyFormula <- function(){
 #'                                            c(C=18, H=24, O=2),
 #'                                            c(C=18, H=24, O=3),
 #'                                            c(C=18, H=24, O=4)))
-#'                                                    
+#'
 #' @export
 chemicals <- R6::R6Class("chemicals",
                       private = list(
                         # letters can be simply a number of some sorts, but
                         # actaully meant to store eg aminoa acid letters,
-                        # eg G for Glycine 
+                        # eg G for Glycine
                         letters_ = NA,
                         # shorts the short names for the chemicals,
                         # eg Ala for Alanine
@@ -690,7 +724,7 @@ chemicals <- R6::R6Class("chemicals",
                         formulas_ = NA
                       ),
                       public = list(
-                        #' @description 
+                        #' @description
                         #' Create a new chemicals object
                         #' @param letters character vector specifying the letters (or numbers or whatever) for the chemicals.
                         #'  In case of amino acids it should be eg "A" for Alanine, "G" for Glycine, etc etc
@@ -701,7 +735,7 @@ chemicals <- R6::R6Class("chemicals",
                         #' @return a new 'chemical' object
                         initialize = function(letters, shorts,
                                               names, formulas){
-                        stopifnot(length(letters) == length(shorts) & 
+                        stopifnot(length(letters) == length(shorts) &
                                     length(letters) == length(names) &
                                     length(letters) == length(formulas))
                           private$letters_  <- letters
@@ -805,18 +839,18 @@ chemicals <- R6::R6Class("chemicals",
                           }
                         }
                       )
-)                        
+)
 
 
 #' R6 Class representing a set of amino acids
-#' 
+#'
 #' Note: this class is meant to be used only for amino acids and such
-#' 
-#' @description 
+#'
+#' @description
 #' R6 Class representing a set of amino acids. It adds three functions to quickly
 #'  switch between different writing 'styles' of peptides
-#'  
-#' @examples 
+#'
+#' @examples
 #' aminoAcidResidues()$getShort("L")
 #' aminoAcidResidues()$getShort("Leu")
 #' aminoAcidResidues()$getName("L")
@@ -824,7 +858,7 @@ chemicals <- R6::R6Class("chemicals",
 #' aminoAcidResidues()$translatePeptide("Asp-Arg-Val-Tyr-Ile-His-Pro-Phe-His-Leu",
 #'  from1to3 = TRUE, splitCharacter ="-")
 #' aminoAcidResidues()$translatePeptide("DRVYIHPFHL", joinCharacter = "-")
-#'                                                    
+#'
 #' @export
 aminoAcidClass <- R6::R6Class("aminoacids",
                               inherit = chemicals,
@@ -947,13 +981,13 @@ aminoAcidClass <- R6::R6Class("aminoacids",
 #' @title Generates a pre-defined object which contains info on 'normal' amino
 #'  acid residues
 #' @note The formulas in the object are amino acid residues as they are present in proteins.
-#'  To get the actual formula of the amino acid in its 'free' form, add c(H=2, O=1) (water) 
+#'  To get the actual formula of the amino acid in its 'free' form, add c(H=2, O=1) (water)
 #' @note this object is used in all protein calculations in this package
-#' 
+#'
 #' @return a R6 object of class 'chemicals'
 #' @examples
 #' print(aminoAcidResidues())
-#' 
+#'
 #' @export
 aminoAcidResidues <- function(){
   aminoAcidClass$new(letters =  c("A","R","N","D",

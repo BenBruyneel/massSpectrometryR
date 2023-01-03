@@ -20,7 +20,7 @@ Warning: all chemicals inside this object should be unique (names, letters &
  shorts)
 }
 \examples{
-estrogens <- chemicals$new(letters = c("1","2","3","4"), 
+estrogens <- chemicals$new(letters = c("1","2","3","4"),
                            shorts = c("E1","E2","E3","E4"),
                            names = c("Estrone","Estradiol",
                                      "Estriol","Estetrol"),
@@ -28,7 +28,7 @@ estrogens <- chemicals$new(letters = c("1","2","3","4"),
                                            c(C=18, H=24, O=2),
                                            c(C=18, H=24, O=3),
                                            c(C=18, H=24, O=4)))
-                                                   
+
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

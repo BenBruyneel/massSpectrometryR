@@ -150,3 +150,8 @@ test_that("aminoacidResidues works",{
   expect_equal(aminoAcidResidues()$getFormula("Gln"), c(C=5, H=8, N=2, O=2, S =0))
   expect_equal(aminoAcidResidues()$getFormula("Q"), c(C=5, H=8, N=2, O=2, S =0))
 })
+
+test_that("pdToFormula works",{
+  expect_equal(pdToFormula("C(6) H(12) O(6)"), c(C=6, H=12, O=6))
+  expect_equal(pdToFormula("H(2) O"), c(H=2, O=1))
+})
