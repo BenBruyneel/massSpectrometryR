@@ -1,7 +1,7 @@
 # massSpectrometryR
 
 R Package that contains a number of utilities for mass spectrometry.
-Currently (version 0.1.7) the package mainly deals with calculations.
+Currently (version 0.1.8) the package mainly deals with calculations.
 
 [massSpectrometryR manual](https://benbruyneel.github.io/massSpectrometryR/)
 
@@ -11,4 +11,4 @@ devtools::install_github("BenBruyneel/massSpectrometryR")
 
 Work in progress!
 
-August, 14th 2022
+February, 18th 2023
