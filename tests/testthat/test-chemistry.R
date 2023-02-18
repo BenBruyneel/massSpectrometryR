@@ -155,3 +155,8 @@ test_that("pdToFormula works",{
   expect_equal(pdToFormula("C(6) H(12) O(6)"), c(C=6, H=12, O=6))
   expect_equal(pdToFormula("H(2) O"), c(H=2, O=1))
 })
+
+test_that("stringToFormula works",{
+  expect_equal(stringToFormula("C6H12O6"), c(C=6, H=12, O=6))
+  expect_equal(stringToFormula("C6H5Br"), c(C=6, H=5, Br=1))
+})

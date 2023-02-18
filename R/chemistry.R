@@ -580,6 +580,45 @@ stringFormula <- function(string){
   return(elementsCount)
 }
 
+#' @title Translates a character vector formula, eg 'C6H12O6' to a regular
+#'  formula c(C=6, H=12, O=6)
+#'
+#' @note this function is an improved version of stringFormula(). Not every elements
+#'  with count 1 can have the number omitted. However, the function depends on 'correct'
+#'  elements (first letter is uppercase, second letter is lowercase)
+#'
+#' @param string character vector, format eg: 'C6H12O6'
+#'
+#' @return formula of format c(H=2, O=1)
+#' @export
+#'
+#' @examples
+#' stringToFormula("H3O4P1")
+#' stringToFormula("C6H12O6")
+#' stringToFormula("C6H5Br")
+stringToFormula <- function(string){
+  if (length(string)==0){
+    return(emptyFormula())
+  }
+  if (length(string)==1){
+    findElements <- stringr::str_locate_all(string,
+                                            pattern = "[:upper:]{1}[:lower:]{0,1}\\d*")[[1]]
+    result <- as.numeric()
+    for (counter in 1:nrow(findElements)){
+      tempStr <- stringr::str_sub(string,
+                                  start = findElements[counter, "start"],
+                                  end = findElements[counter, "end"])
+      result[counter] <- as.numeric(stringr::str_extract(tempStr, pattern = "\\d+"))
+      if (is.na(result[counter])){
+        result[counter] <- 1
+      }
+      names(result)[counter] <- stringr::str_extract(tempStr, pattern = "[:alpha:]+")
+    }
+    return(result)
+  }
+  return(lapply(string, stringToFormula))
+}
+
 #' @title translates an cdkFormula object to a 'regular' formula format
 #'
 #' @param cdkformula an object of type rcdkFormula
