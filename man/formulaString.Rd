@@ -5,7 +5,7 @@
 \title{Translates regular formula format into a character vector, eg
  C6H12O6}
 \usage{
-formulaString(formula, removeSingle = FALSE)
+formulaString(formula, removeSingle = FALSE, useMarkdown = FALSE)
 }
 \arguments{
 \item{formula}{named numeric vector, example c(O = 2, C = 1)}
@@ -13,6 +13,10 @@ formulaString(formula, removeSingle = FALSE)
 \item{removeSingle}{if TRUE then for elements that are present in the
 formula only a single time, the number (1) will not be included. Default is
 FALSE. See also examples}
+
+\item{useMarkdown}{default = FALSE. If TRUE, the it will use HTML/Markdown
+codes <sub> in the formulas, which can be used with the library 'gt' to
+generate 'proper' notation for chemical formulas (numbers in subscript)}
 }
 \value{
 character vector

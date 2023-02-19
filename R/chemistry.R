@@ -508,6 +508,9 @@ massToMzH <- function(mass, charge = 1, elementsInfo = elementsMonoisotopic()){
 #' @param removeSingle if TRUE then for elements that are present in the
 #'  formula only a single time, the number (1) will not be included. Default is
 #'  FALSE. See also examples
+#' @param useMarkdown default = FALSE. If TRUE, the it will use HTML/Markdown
+#'  codes <sub> in the formulas, which can be used with the library 'gt' to
+#'  generate 'proper' notation for chemical formulas (numbers in subscript)
 #'
 #' @return character vector
 #' @export
@@ -518,7 +521,7 @@ massToMzH <- function(mass, charge = 1, elementsInfo = elementsMonoisotopic()){
 #' formulaString(c(H=3,O=4,P=1), removeSingle = TRUE)
 #' formulaString(c(H=2, O=1))
 #' formulaString(c(H=2, O=1), removeSingle = TRUE)
-formulaString <- function(formula, removeSingle = FALSE){
+formulaString <- function(formula, removeSingle = FALSE, useMarkdown = FALSE){
   for (counter in 1:length(formula)){
     if (stringr::str_count(names(formula)[counter],
                            pattern = "\\d+[:alpha:]+")>0){
@@ -543,7 +546,11 @@ formulaString <- function(formula, removeSingle = FALSE){
                function(x){paste(names(formula)[x],
                                  ifelse(removeSingle & (formula[x] == 1),
                                         "",
-                                        toString(formula[x])),sep = "")})),
+                                        paste(c(ifelse(useMarkdown,"<sub>",""),
+                                                toString(formula[x]),
+                                                ifelse(useMarkdown,"</sub>","")),
+                                              collapse = "")),
+                                 sep = "")})),
       collapse =""))
 }
 
