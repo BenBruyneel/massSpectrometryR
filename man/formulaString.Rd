@@ -5,10 +5,14 @@
 \title{Translates regular formula format into a character vector, eg
  C6H12O6}
 \usage{
-formulaString(formula)
+formulaString(formula, removeSingle = FALSE)
 }
 \arguments{
 \item{formula}{named numeric vector, example c(O = 2, C = 1)}
+
+\item{removeSingle}{if TRUE then for elements that are present in the
+formula only a single time, the number (1) will not be included. Default is
+FALSE. See also examples}
 }
 \value{
 character vector
@@ -20,4 +24,7 @@ Translates regular formula format into a character vector, eg
 \examples{
 formulaString(c(C=6, H=12, O=6))
 formulaString(c(H=3,O=4,P=1))
+formulaString(c(H=3,O=4,P=1), removeSingle = TRUE)
+formulaString(c(H=2, O=1))
+formulaString(c(H=2, O=1), removeSingle = TRUE)
 }

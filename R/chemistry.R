@@ -505,6 +505,9 @@ massToMzH <- function(mass, charge = 1, elementsInfo = elementsMonoisotopic()){
 #'  C6H12O6
 #'
 #' @param formula named numeric vector, example c(O = 2, C = 1)
+#' @param removeSingle if TRUE then for elements that are present in the
+#'  formula only a single time, the number (1) will not be included. Default is
+#'  FALSE. See also examples
 #'
 #' @return character vector
 #' @export
@@ -512,7 +515,10 @@ massToMzH <- function(mass, charge = 1, elementsInfo = elementsMonoisotopic()){
 #' @examples
 #' formulaString(c(C=6, H=12, O=6))
 #' formulaString(c(H=3,O=4,P=1))
-formulaString <- function(formula){
+#' formulaString(c(H=3,O=4,P=1), removeSingle = TRUE)
+#' formulaString(c(H=2, O=1))
+#' formulaString(c(H=2, O=1), removeSingle = TRUE)
+formulaString <- function(formula, removeSingle = FALSE){
   for (counter in 1:length(formula)){
     if (stringr::str_count(names(formula)[counter],
                            pattern = "\\d+[:alpha:]+")>0){
@@ -535,7 +541,9 @@ formulaString <- function(formula){
       unlist(
         lapply(1:length(formula),
                function(x){paste(names(formula)[x],
-                                 toString(formula[x]),sep = "")})),
+                                 ifelse(removeSingle & (formula[x] == 1),
+                                        "",
+                                        toString(formula[x])),sep = "")})),
       collapse =""))
 }
 
