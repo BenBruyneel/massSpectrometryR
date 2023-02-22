@@ -7,7 +7,9 @@
 formulaToMass(
   formula = NULL,
   removeNA = FALSE,
-  elementsInfo = elementsMonoisotopic()
+  elementsInfo = elementsMonoisotopic(),
+  enviPat = FALSE,
+  exact = TRUE
 )
 }
 \arguments{
@@ -17,7 +19,19 @@ formulaToMass(
 TRUE, then remove before calculation, if FALSE, then do not remove}
 
 \item{elementsInfo}{elements masses to be used, needs to be of class
-elements, default is elementsMonoisotopic()}
+elements, default is elementsMonoisotopic(). The elementsAverage() function
+does not produce 100% correct answer for a lot of molecules due to the
+complex isotope patterns that emerge. In case average masses are needed it's
+better to use the enviPat option}
+
+\item{enviPat}{logical argument that determines if the enviPat based
+calculations should be used. Default is FALSE. For monoisotopoc masses
+there is no difference, but for average masses of larger molecules (with
+complicated isotope patterns) it's highly recommended to use enviPat = TRUE
+with exact = FALSE}
+
+\item{exact}{determines if the exact (TRUE, default) or the average (FALSE)
+mass is calculated (ignored if enviPat is FALSE)#'}
 }
 \value{
 numeric vector
@@ -28,4 +42,8 @@ calculates the neutral mono-isotopic mass of a formula
 \examples{
 formulaToMass(c(H=2, O=1))
 formulaToMass(c(H=2, O=1), elementsInfo = elementsAverage())
+formulaToMass(c(C = 50, H=102))
+formulaToMass(c(C = 50, H=102), elementsInfo = elementsAverage())
+formulaToMass(c(C = 50, H=102), enviPat = TRUE)
+formulaToMass(c(C = 50, H=102), enviPat = TRUE, exact = FALSE)
 }

@@ -1,8 +1,8 @@
 Package: massSpectrometryR
 Type: Package
-Imports: R6, stringr, magrittr, tibble, dplyr, rcdk, purrr
+Imports: R6, stringr, magrittr, tibble, dplyr, rcdk, purrr, enviPat
 Title: massSpectrometryR
-Version: 0.1.10
+Version: 0.1.12
 Author: Ben Bruyneel <benbruyneel@gmail.com>
 Maintainer: Ben Bruyneel <benbruyneel@gmail.com>
 Description: Provides calculations, plotting etc for chemistry & mass spectrometry.
@@ -17,3 +17,5 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Depends: 
+    R (>= 2.10)

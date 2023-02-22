@@ -384,7 +384,17 @@ addListFormulas <- function(formulas){
 #' @param removeNA logical vector: what to do if any of the elements is NA. If
 #'  TRUE, then remove before calculation, if FALSE, then do not remove
 #' @param elementsInfo elements masses to be used, needs to be of class
-#'  elements, default is elementsMonoisotopic()
+#'  elements, default is elementsMonoisotopic(). The elementsAverage() function
+#'  does not produce 100% correct answer for a lot of molecules due to the
+#'  complex isotope patterns that emerge. In case average masses are needed it's
+#'  better to use the enviPat option
+#' @param enviPat logical argument that determines if the enviPat based
+#'  calculations should be used. Default is FALSE. For monoisotopoc masses
+#'  there is no difference, but for average masses of larger molecules (with
+#'  complicated isotope patterns) it's highly recommended to use enviPat = TRUE
+#'  with exact = FALSE
+#' @param exact determines if the exact (TRUE, default) or the average (FALSE)
+#'  mass is calculated (ignored if enviPat is FALSE)#'
 #'
 #' @return numeric vector
 #' @export
@@ -392,7 +402,13 @@ addListFormulas <- function(formulas){
 #' @examples
 #' formulaToMass(c(H=2, O=1))
 #' formulaToMass(c(H=2, O=1), elementsInfo = elementsAverage())
-formulaToMass <- function(formula = NULL, removeNA = FALSE, elementsInfo = elementsMonoisotopic()){
+#' formulaToMass(c(C = 50, H=102))
+#' formulaToMass(c(C = 50, H=102), elementsInfo = elementsAverage())
+#' formulaToMass(c(C = 50, H=102), enviPat = TRUE)
+#' formulaToMass(c(C = 50, H=102), enviPat = TRUE, exact = FALSE)
+formulaToMass <- function(formula = NULL, removeNA = FALSE,
+                          elementsInfo = elementsMonoisotopic(),
+                          enviPat = FALSE, exact = TRUE){
   if (!is.null(formula)){
     if (sum(is.na(formula))>0){  # in case any of the elements is NA
       if (!removeNA){
@@ -401,7 +417,24 @@ formulaToMass <- function(formula = NULL, removeNA = FALSE, elementsInfo = eleme
         formula <- formula[!is.na(formula)]
       }
     }
-    return(sum(unlist(lapply(names(formula),function(x){elementsInfo$getMass(x)})) * formula))
+    if (!enviPat){
+      # do not calculate via enviPat
+      return(sum(unlist(lapply(names(formula),function(x){elementsInfo$getMass(x)})) * formula))
+    } else {
+      suppressMessages(
+        result <- enviPat::isopattern(isotopes = isotopes,
+                                      chemforms = formula |> formulaString(),
+                                      threshold = 0.01,
+                                      plotit = FALSE,
+                                      verbose = FALSE)[[1]]
+      )
+      # calculate via enviPat
+      if (!exact){
+        return(stats::weighted.mean(result[,1], result[,2]))
+      } else {
+        return(unname(result[1,1]))
+      }
+    }
   } else {
     return(NA)
   }
