@@ -223,6 +223,22 @@ sortFormula <- function(formula, decrease = FALSE){
   return(formula[order(names(formula), decreasing = decrease)])
 }
 
+#' @title removeZeros
+#' @description removes elements that have number zero
+#'
+#' @param formula named numeric vector, example c(O = 2, C = 1)
+#'
+#' @return named numeric vector (formula)
+#' @export
+#'
+#' @examples
+#' glucose = c(O=6, H=12, C=6)
+#' glucose %f+% emptyFormula()
+#' removeZeros(glucose %f+% emptyFormula())
+removeZeros <-function(formula){
+  return(formula[formula != 0])
+}
+
 #' @title elementsInFormula
 #' @description retrieves the names of the elements in a formula
 #'
