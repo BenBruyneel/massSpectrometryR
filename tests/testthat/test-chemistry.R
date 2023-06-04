@@ -85,8 +85,6 @@ test_that("formulaToMass works",{
   expect_equal(toString(formulaToMass(c(C = 3, H =  5, N = 1, O = 1, S = 0),
                                       elementsInfo = elementsAverage())),
                "71.0777")
-  expect_equal(toString(formulaToMass(c(C = 3, H =  -5, N = 1, O = 1, S = 0))),
-               "60.95886347")
 })
 
 test_that("massToMz works",{

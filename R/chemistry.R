@@ -459,7 +459,8 @@ formulaToMass <- function(formula = NULL, removeNA = FALSE,
         formula <- formula[!is.na(formula)]
       }
     }
-    if (identical(formula, emptyFormula())){
+    formula <- formula[formula > 0] # removeZeros
+    if (length(formula) == 0){
       return(0)
     }
     if (!enviPat){
