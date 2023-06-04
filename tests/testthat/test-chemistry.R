@@ -69,6 +69,14 @@ test_that("addListFormulas works",{
                c(H=5, O=2, P=1, S=2))
 })
 
+
+test_that("validFormula works",{
+  expect_equal(validFormula(formula = c(C=6, H=12, O=6)), TRUE)
+  expect_equal(validFormula(formula = "C6H12O6", string = T), TRUE)
+  expect_equal(validFormula(formula = c(C=6, H=12, O=6, Vv = 7)), FALSE)
+  expect_equal(validFormula(formula = "C6H12O6Vv7", string = T), FALSE)
+})
+
 test_that("formulaToMass works",{
   expect_equal(toString(formulaToMass(c(C=1))), "12")
   expect_equal(toString(formulaToMass(c(C=1, O=2))), "43.98982924")
@@ -114,6 +122,15 @@ test_that("formulaString & stringFormula work",{
                "H3P-1O4")
   expect_equal(stringFormula("C6H12O6"), c(C=6, H=12, O=6))
   expect_equal(stringFormula("C6H12O6S-1"), c(C=6, H=12, O=6, S=-1))
+})
+
+test_that("stringToFormula works",{
+  expect_equal(stringToFormula("C6H12O6"),
+               c(C=6, H=12, O= 6))
+  glucIsotope <- c(C=5, c13 = 1, H = 12, O18 = 1, O= 5)
+  names(glucIsotope)[c(2,4)] <- c("[13]C", "[18]O")
+  expect_equal(stringToFormula("C5[13]C1H12[18]O1O5"),
+               glucIsotope)
 })
 
 test_that("standard formulas are correct",{

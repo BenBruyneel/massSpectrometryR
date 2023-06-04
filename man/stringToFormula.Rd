@@ -18,12 +18,14 @@ Translates a character vector formula, eg 'C6H12O6' to a regular
  formula c(C=6, H=12, O=6)
 }
 \note{
-this function is an improved version of stringFormula(). Not every elements
+this function is an improved version of stringFormula(). Now every elements
  with count 1 can have the number omitted. However, the function depends on 'correct'
- elements (first letter is uppercase, second letter is lowercase)
+ elements (first letter is uppercase, second letter is lowercase). This function also
+ allows for the presence of isotopes, eg '[13]C' or '[2]H2O'
 }
 \examples{
 stringToFormula("H3O4P1")
 stringToFormula("C6H12O6")
 stringToFormula("C6H5Br")
+stringToFormula("[13]C6H12O5[18]O")
 }

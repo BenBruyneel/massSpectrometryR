@@ -394,6 +394,32 @@ addListFormulas <- function(formulas){
   return(result)
 }
 
+#' @title checks if formula is valid
+#'
+#' @note This is done via the check_chemform function from the package enviPat
+#'
+#' @param formula character vector or named numeric vector, representing the
+#'  formula to be checked
+#' @param string logical vector specifying if the formula is a character vector
+#'  or not
+#'
+#' @return logical vector
+#' @export
+#'
+#' @examples
+#' glucose <- c(C=6, H=12, O=6)
+#' validFormula(glucose)
+#' formulaString(glucose)
+#' validFormula(formulaString(glucose), string = TRUE)
+validFormula <- function(formula, string = FALSE){
+  if (!string){
+    formula <- formulaString(formula = formula)
+  }
+  data(isotopes, envir = environment(), package = "enviPat")
+  result <- enviPat::check_chemform(isotopes = isotopes, chemforms = formula)
+  return(!result$warning)
+}
+
 #' @title calculates the neutral mono-isotopic mass of a formula
 #'
 #' @param formula named numeric vector, example c(O = 2, C = 1)
@@ -437,18 +463,22 @@ formulaToMass <- function(formula = NULL, removeNA = FALSE,
       # do not calculate via enviPat
       return(sum(unlist(lapply(names(formula),function(x){elementsInfo$getMass(x)})) * formula))
     } else {
-      suppressMessages(
-        result <- enviPat::isopattern(isotopes = isotopes,
-                                      chemforms = formula |> formulaString(),
-                                      threshold = 0.01,
-                                      plotit = FALSE,
-                                      verbose = FALSE)[[1]]
-      )
-      # calculate via enviPat
-      if (!exact){
-        return(stats::weighted.mean(result[,1], result[,2]))
+      if (!validFormula(formula)){
+        return(NA)
       } else {
-        return(unname(result[1,1]))
+        suppressMessages(
+          result <- enviPat::isopattern(isotopes = isotopes,
+                                        chemforms = formula |> formulaString(),
+                                        threshold = 0.01,
+                                        plotit = FALSE,
+                                        verbose = FALSE)[[1]]
+        )
+        # calculate via enviPat
+        if (!exact){
+          return(stats::weighted.mean(result[,1], result[,2]))
+        } else {
+          return(unname(result[1,1]))
+        }
       }
     }
   } else {
@@ -647,9 +677,10 @@ stringFormula <- function(string){
 #' @title Translates a character vector formula, eg 'C6H12O6' to a regular
 #'  formula c(C=6, H=12, O=6)
 #'
-#' @note this function is an improved version of stringFormula(). Not every elements
+#' @note this function is an improved version of stringFormula(). Now every elements
 #'  with count 1 can have the number omitted. However, the function depends on 'correct'
-#'  elements (first letter is uppercase, second letter is lowercase)
+#'  elements (first letter is uppercase, second letter is lowercase). This function also
+#'  allows for the presence of isotopes, eg '[13]C' or '[2]H2O'
 #'
 #' @param string character vector, format eg: 'C6H12O6'
 #'
@@ -660,23 +691,24 @@ stringFormula <- function(string){
 #' stringToFormula("H3O4P1")
 #' stringToFormula("C6H12O6")
 #' stringToFormula("C6H5Br")
+#' stringToFormula("[13]C6H12O5[18]O")
 stringToFormula <- function(string){
   if (length(string)==0){
     return(emptyFormula())
   }
   if (length(string)==1){
     findElements <- stringr::str_locate_all(string,
-                                            pattern = "[:upper:]{1}[:lower:]{0,1}\\d*")[[1]]
+                                            pattern = "(\\[{0,1}[:digit:]+\\]{0,1}){0,1}[:upper:]{1}[:lower:]{0,1}\\d*")[[1]]
     result <- as.numeric()
     for (counter in 1:nrow(findElements)){
       tempStr <- stringr::str_sub(string,
                                   start = findElements[counter, "start"],
                                   end = findElements[counter, "end"])
-      result[counter] <- as.numeric(stringr::str_extract(tempStr, pattern = "\\d+"))
+      result[counter] <- as.numeric(stringr::str_extract(tempStr, pattern = "\\d+$"))
       if (is.na(result[counter])){
         result[counter] <- 1
       }
-      names(result)[counter] <- stringr::str_extract(tempStr, pattern = "[:alpha:]+")
+      names(result)[counter] <- stringr::str_extract(tempStr, pattern = ".*[:alpha:]+")
     }
     return(result)
   }
