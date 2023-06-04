@@ -693,7 +693,7 @@ stringFormula <- function(string){
 #' stringToFormula("C6H5Br")
 #' stringToFormula("[13]C6H12O5[18]O")
 stringToFormula <- function(string){
-  if (length(string)==0){
+  if (nchar(string)==0){
     return(emptyFormula())
   }
   if (length(string)==1){
