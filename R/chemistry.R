@@ -459,6 +459,9 @@ formulaToMass <- function(formula = NULL, removeNA = FALSE,
         formula <- formula[!is.na(formula)]
       }
     }
+    if (identical(formula, emptyFormula())){
+      return(0)
+    }
     if (!enviPat){
       # do not calculate via enviPat
       return(sum(unlist(lapply(names(formula),function(x){elementsInfo$getMass(x)})) * formula))
