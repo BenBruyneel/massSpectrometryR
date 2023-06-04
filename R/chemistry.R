@@ -470,18 +470,24 @@ formulaToMass <- function(formula = NULL, removeNA = FALSE,
       if (!validFormula(formula)){
         return(NA)
       } else {
-        suppressMessages(
-          result <- enviPat::isopattern(isotopes = isotopes,
-                                        chemforms = formula |> formulaString(),
-                                        threshold = 0.01,
-                                        plotit = FALSE,
-                                        verbose = FALSE)[[1]]
-        )
         # calculate via enviPat
         if (!exact){
+          suppressMessages(
+            result <- enviPat::isopattern(isotopes = isotopes,
+                                          chemforms = formula |> formulaString(),
+                                          threshold = 0.01,
+                                          plotit = FALSE,
+                                          verbose = FALSE)[[1]]
+          )
           return(stats::weighted.mean(result[,1], result[,2]))
         } else {
-          return(unname(result[1,1]))
+          result <- enviPat::check_chemform(isotopes = isotopes,
+                                            chemforms = formula |> formulaString())$monoisotopic_mass
+          if (result < 0){
+            return(NA)
+          } else {
+            return(result)
+          }
         }
       }
     }
