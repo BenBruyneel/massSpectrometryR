@@ -629,19 +629,24 @@ formulaString <- function(formula, removeSingle = FALSE, useMarkdown = FALSE){
         ), collapse = "")
     }
   }
-  return(
-    paste(
-      unlist(
-        lapply(1:length(formula),
-               function(x){paste(names(formula)[x],
-                                 ifelse(removeSingle & (formula[x] == 1),
-                                        "",
-                                        paste(c(ifelse(useMarkdown,"<sub>",""),
-                                                toString(formula[x]),
-                                                ifelse(useMarkdown,"</sub>","")),
-                                              collapse = "")),
-                                 sep = "")})),
-      collapse =""))
+  result <- paste(
+    unlist(
+      lapply(1:length(formula),
+             function(x){paste(names(formula)[x],
+                               ifelse(removeSingle & (formula[x] == 1),
+                                      "",
+                                      paste(c(ifelse(useMarkdown,"<sub>",""),
+                                              toString(formula[x]),
+                                              ifelse(useMarkdown,"</sub>","")),
+                                            collapse = "")),
+                               sep = "")})),
+    collapse ="")
+  
+  if (useMarkdown){
+    result <- gsub(result, pattern = "\\[", replacement = "<sup>")
+    result <- gsub(result, pattern = "\\]", replacement = "</sup>")
+  }
+  return(result)
 }
 
 #' @title  Translates a character vector formula, eg 'C6H12O6' to a regular
