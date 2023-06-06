@@ -471,6 +471,7 @@ formulaToMass <- function(formula = NULL, removeNA = FALSE,
         return(NA)
       } else {
         # calculate via enviPat
+        data(isotopes, envir = environment(), package = "enviPat")
         if (!exact){
           suppressMessages(
             result <- enviPat::isopattern(isotopes = isotopes,
