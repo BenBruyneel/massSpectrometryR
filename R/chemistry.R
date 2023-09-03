@@ -557,7 +557,6 @@ massToMz <- function(mass, adducts = 0, adductFormula = electronFormula(),
   }
 }
 
-# \code{\link[proteinDiscover]{dbGetTable}}
 
 #' @title Calculates the m/z value of a protonated ion (positive ESI)
 #'
@@ -585,6 +584,60 @@ massToMz <- function(mass, adducts = 0, adductFormula = electronFormula(),
 #' massToMzH(lysineMass)
 massToMzH <- function(mass, charge = 1, elementsInfo = elementsMonoisotopic()){
   massToMz(mass, adducts = charge,
+           adductFormula = protonFormula(), adductCharge = 1,
+           elementsInfo = elementsInfo)
+}
+
+
+#' @title calculates the mass of the molecule in an ion
+#'
+#' @description essentially the reverse of the \code{\link{massToMz}}
+#'
+#' @param mz mass to charge ratio of the ion
+#' @param adducts numeric vector, number of adducts 'attached to' or 'removed
+#'  from' the (originally neutral) molecule
+#' @param adductFormula formula (named numeric vector) of the adduct
+#' @param adductCharge numeric vector indicating the actual charge per adduct
+#' @param elementsInfo elements masses to be used, needs to be of class
+#'  elements, default is elementsMonoisotopic()
+#'
+#' @return numeric vector
+#' @export
+#'
+#' @examples
+#' massToMz(mass = 174.1117, adductFormula = c(e=1), adducts = 2, adductCharge = -1) |>
+#'  mzToMass(adductFormula = c(e=1), adducts = 2, adductCharge = -1)
+#' massToMz(mass = 174.1117, adductFormula = c(H=1), adducts = 1, adductCharge = 1) |>
+#'  mzToMass(adductFormula = c(H=1), adducts = 1, adductCharge = 1)
+mzToMass <- function(mz, adducts = 0, adductFormula = electronFormula(), adductCharge = -1, elementsInfo = elementsMonoisotopic()){
+  # deduct adducts
+  result <- (mz * adducts * abs(adductCharge)) - (adducts * formulaToMass(adductFormula, elementsInfo = elementsInfo))
+  # if charger is not electron
+  if (!identical(adductFormula,electronFormula())){
+    result <- result + (abs(adductCharge) * adducts * formulaToMass(electronFormula(),
+                                                                    elementsInfo = elementsInfo))
+  }
+  return(result)
+}
+
+#' @title calculates the mass of the molecule in an ion (M+xH)x+
+#'
+#' @description a wrapper around \code{\link{mzToMass}} for positively charged,
+#'  protonated ions in ESI
+#'
+#' @param mz numeric vector, mass to charge ratio of he ion
+#' @param charge charge state
+#' @param elementsInfo elements masses to be used, needs to be of class
+#'  elements, default is elementsMonoisotopic()
+#'
+#' @return nuemric vector
+#' @export
+#'
+#' @examples
+#'  massToMzH(mass = 174.1117, charge = 2) |> mzHToMass(charge = 2)
+#'  massToMzH(mass = 174.1117, charge = 1) |> mzHToMass(charge = 1)
+mzHToMass <- function(mz, charge = 1, elementsInfo = elementsMonoisotopic()){
+  mzToMass(mz = mz, adducts = charge,
            adductFormula = protonFormula(), adductCharge = 1,
            elementsInfo = elementsInfo)
 }
@@ -641,7 +694,7 @@ formulaString <- function(formula, removeSingle = FALSE, useMarkdown = FALSE){
                                             collapse = "")),
                                sep = "")})),
     collapse ="")
-  
+
   if (useMarkdown){
     result <- gsub(result, pattern = "\\[", replacement = "<sup>")
     result <- gsub(result, pattern = "\\]", replacement = "</sup>")

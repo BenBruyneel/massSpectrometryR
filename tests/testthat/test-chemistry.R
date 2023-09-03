@@ -101,6 +101,7 @@ test_that("massToMz works",{
                       digits = 8, nsmall = 4),
                "175.1191")
 
+
 })
 
 test_that("massToMzH works",{
@@ -112,6 +113,46 @@ test_that("massToMzH works",{
                       digits = 8, nsmall = 4),
                "175.1191")
 })
+
+test_that("mzToMass works",{
+  expect_equal(format(
+    massToMz(mass = 174.1117, adductFormula = c(e=1), adducts = 2, adductCharge = -1) |>
+      mzToMass(adductFormula = c(e=1), adducts = 2, adductCharge = -1),
+    digits = 12, nsmall = 8),
+    "174.11170000")
+  expect_equal(format(
+    massToMz(mass = 174.1117, adductFormula = c(e=1), adducts = 2, adductCharge = -1) |>
+        mzToMass(adductFormula = c(e=1), adducts = 2, adductCharge = -1),
+      digits = 12, nsmall = 8),
+    "174.11170000")
+  expect_equal(format(
+    massToMz(mass = 174.1117, adductFormula = c(H=1), adducts = 2, adductCharge = 1) |>
+      mzToMass(adductFormula = c(H=1), adducts = 2, adductCharge = 1),
+    digits = 12, nsmall = 8),
+    "174.11170000")
+  expect_equal(format(
+    massToMz(mass = 174.1117, adductFormula = c(H=1), adducts = 1, adductCharge = 1) |>
+      mzToMass(adductFormula = c(H=1), adducts = 1, adductCharge = 1),
+    digits = 12, nsmall = 8),
+    "174.11170000")
+
+})
+
+test_that("mzHToMass works",{
+  expect_equal(format(
+    massToMzH(mass = 174.1117, charge = 2) |>
+      mzHToMass(charge = 2),
+    digits = 12, nsmall = 8),
+    "174.11170000"
+  )
+  expect_equal(format(
+    massToMzH(mass = 174.1117, charge = 1) |>
+      mzHToMass(charge = 1),
+    digits = 12, nsmall = 8),
+    "174.11170000"
+  )
+})
+
 
 test_that("formulaString & stringFormula work",{
   expect_equal(formulaString(c(H=3, P=1, O= 4)),
