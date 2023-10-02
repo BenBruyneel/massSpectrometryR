@@ -2,7 +2,7 @@ Package: massSpectrometryR
 Type: Package
 Imports: R6, stringr, magrittr, tibble, dplyr, rcdk, purrr, enviPat
 Title: massSpectrometryR
-Version: 0.2.5
+Version: 0.3.0
 Author: Ben Bruyneel <benbruyneel@gmail.com>
 Maintainer: Ben Bruyneel <benbruyneel@gmail.com>
 Description: Provides calculations, plotting etc for chemistry & mass spectrometry.

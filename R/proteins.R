@@ -32,6 +32,136 @@ peptideFragments <- function(){
   )
 }
 
+#' @title Digests a sequence and returns
+#'
+#' @param sequence character vector representing the amino acid sequence to be
+#'  digested. Note: the letters in sequence will be changed to upper case.
+#' @param enzyme character string specifying the enzyme to be used for the
+#'  digestion. Default is 'trypsin'. Other options are 'trypsin.strict', 'pepsin',
+#'  'chymotrypsin' and 'chymotrypsin.strict'
+#' @param missed integer vector: the maximum number of allowed missed cleavages
+#'
+#' @return data.frame with the columns 'peptide', 'start', 'stop' and 'mc'
+#'  (missed cleavages)
+#' @export
+#'
+#' @note This function is an modified version of the Digest function found in
+#'  the package 'OrgMassSpecR'
+digest <- function(sequence, enzyme = "trypsin", missed = 0){
+
+    ## determine cleavage sites according to enzyme specific rules
+  seq_vector <- strsplit(sequence, split = "")[[1]]
+  end_position <- length(seq_vector)
+
+  if(enzyme == "trypsin") {
+    if(seq_vector[end_position] == "K" | seq_vector[end_position] == "R") {
+      seq_vector[end_position] <- "!"
+      seq_string <- paste(seq_vector, collapse = "")
+    } else seq_string <- sequence
+    # prevent cleavage at K and R if followed by P
+    seq_string <- gsub("KP", "!P", seq_string)
+    seq_string <- gsub("RP", "!P", seq_string)
+    seq_vector <- strsplit(seq_string, split = "")[[1]]
+    stop <- grep("K|R", seq_vector)
+    start <- stop + 1
+  } else {
+    if(enzyme == "trypsin.strict") {
+      if(seq_vector[end_position] == "K" | seq_vector[end_position] == "R") {
+        seq_vector[end_position] <- "!"
+        seq_string <- paste(seq_vector, collapse = "")
+      } else seq_string <- sequence
+      seq_vector <- strsplit(seq_string, split = "")[[1]]
+      stop <- grep("K|R", seq_vector)
+      start <- stop + 1
+    } else {
+      if(enzyme == "pepsin") {
+        if(seq_vector[end_position] == "F" | seq_vector[end_position] == "L" |
+           seq_vector[end_position] == "W" | seq_vector[end_position] == "Y" |
+           seq_vector[end_position] == "A" | seq_vector[end_position] == "E" |
+           seq_vector[end_position] == "Q") {
+          seq_vector[end_position] <- "!"
+        }
+        stop <- grep("F|L|W|Y|A|E|Q", seq_vector)
+        start <- stop + 1
+      } else {
+        if (enzyme == "chymotrypsin"){
+          if (seq_vector[end_position] %in% c("F","Y","W","M","E","D","L","N")){
+            seq_vector[end_position] <- "!"
+            seq_string <- paste(seq_vector, collapse = "")
+          } else {
+            seq_string <- sequence
+          }
+          # prevent cleavage at residues if followed by P
+          seq_string <- gsub("FP", "!P", seq_string)
+          seq_string <- gsub("YP", "!P", seq_string)
+          seq_string <- gsub("WP", "!P", seq_string)
+          seq_string <- gsub("MP", "!P", seq_string)
+          seq_string <- gsub("EP", "!P", seq_string)
+          seq_string <- gsub("DP", "!P", seq_string)
+          seq_string <- gsub("LP", "!P", seq_string)
+          seq_string <- gsub("NP", "!P", seq_string)
+          seq_vector <- strsplit(seq_string, split = "")[[1]]
+          stop <- grep("F|Y|W|M|E|D|L|N", seq_vector)
+          start <- stop + 1
+        } else {
+          if (enzyme == "chymotrypsin.strict"){
+            if (seq_vector[end_position] %in% c("F","Y","W")){
+              seq_vector[end_position] <- "!"
+              seq_string <- paste(seq_vector, collapse = "")
+            } else {
+              seq_string <- sequence
+            }
+            # prevent cleavage at residues if followed by P
+            seq_string <- gsub("FP", "!P", seq_string)
+            seq_string <- gsub("YP", "!P", seq_string)
+            seq_string <- gsub("WP", "!P", seq_string)
+            seq_vector <- strsplit(seq_string, split = "")[[1]]
+            stop <- grep("F|Y|W", seq_vector)
+            start <- stop + 1
+          } else {
+            warning(paste(c("Enzyme ",enzyme," not defined"), collapse = ""))
+            return(NA)
+          }
+        }
+      }
+    }
+  }
+
+  if(length(stop) == 0){
+    warning("sequence does not contain cleavage sites")
+    return(NA)
+  }
+  if(missed > length(stop)){
+    warning("number of specified missed cleavages is greater than the maximum possible")
+    return(NA)
+  }
+
+  ## cleave sequence
+  cleave <- function(sequence, start, stop, misses) {
+    peptide <- substring(sequence, start, stop)
+    mc <- rep(misses, times = length(peptide))
+    result <- data.frame(peptide, start, stop, mc, stringsAsFactors = FALSE)
+    return(result)
+  }
+
+  # peptides if 0 missed cleavages
+  start <- c(1, start)
+  stop <- c(stop, end_position)
+  results <- cleave(sequence, start, stop, 0)
+
+  # peptides if missed cleavages > 0
+  if(missed > 0) {
+    for(i in 1:missed) {
+      start_tmp <- start[1:(length(start) - i)]
+      stop_tmp <- stop[(1 + i):length(stop)]
+      peptide <- cleave(sequence, start_tmp, stop_tmp, i)
+      results <- rbind(results, peptide)
+    }
+  }
+  return(results)
+}
+
+
 
 # ---- general - calculations ----
 

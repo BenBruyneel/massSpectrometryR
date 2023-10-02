@@ -14,6 +14,23 @@ test_that("peptideFragments works",{
   expect_equal(peptideFragments()$series[12], "y-NH3")
 })
 
+test_that("digest works",{
+  expect_equal(digest('FVNQHLCGSHLVEALYLVCGERGFFYTPKT')$peptide[2], 'GFFYTPK')
+  expect_equal(digest('FVNQHLCGSHLVEALYLVCGERGFFYTPKT', missed = 2)$peptide[4],
+               'FVNQHLCGSHLVEALYLVCGERGFFYTPK')
+  expect_equal(nrow(digest('FVNQHLCGSHLVEALYLVCGERGFFYTPKT', missed = 2)), 6)
+  expect_equal(digest('FVNQHLCGSHLVEALYLVCGERGFFYTPKT', missed = 2)$mc,
+               c(0,0,0,1,1,2))
+  expect_equal(nrow(digest('FVNQHLCGSHLVEALYLVCGERGFFYTPKT', enzyme = 'pepsin',
+                           missed = 2)), 39)
+  expect_equal(nrow(digest('FVNQHLCGSHLVEALYLVCGERGFFYTPKT',
+                           enzyme = 'chymotrypsin', missed = 2)), 36)
+  expect_equal(nrow(digest('FVNQHLCGSHLVEALYLVCGERGFFYTPKT',
+                           enzyme = 'chymotrypsin.strict', missed = 2)), 15)
+  expect_equal(nrow(digest('FVNQHLCGSHLVEALYLVCGERGFFYTPKT',
+                           enzyme = 'trypsin.strict', missed = 1)), 5)
+})
+
 test_that("peptideFormula works",{
   expect_equal(peptideFormula("SAMPLER"), c(C=33, H=58, N=10, O=11, S=1))
   expect_equal(peptideFormula("SAMPLEr"), c(C=33, H=58, N=10, O=11, S=1))
