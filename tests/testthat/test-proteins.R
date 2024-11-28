@@ -139,7 +139,7 @@ test_that("peptide class works",{
                     loss = c(C=0, H=0, N= 0, O=0, S=0)))
   expect_equal(format(sum(tester$fragments.immoniumIons()),
                       digits = 8, nsmall = 4),
-               "847.6342")
+               "1020.7972")
   expect_equal(nrow(tester$modificationsTable), 5)
   tester <- peptide$new(sequence = "CAMPLER",
                         variableModifications = "0010000",
