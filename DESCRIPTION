@@ -2,7 +2,7 @@ Package: massSpectrometryR
 Type: Package
 Imports: R6, stringr, magrittr, tibble, dplyr, rcdk, purrr, enviPat
 Title: massSpectrometryR
-Version: 0.3.0
+Version: 0.4.0
 Author: Ben Bruyneel <benbruyneel@gmail.com>
 Maintainer: Ben Bruyneel <benbruyneel@gmail.com>
 Description: Provides calculations, plotting etc for chemistry & mass spectrometry.
@@ -10,7 +10,7 @@ License: GPL (>= 3)
 Encoding: UTF-8
 URL: https://github.com/BenBruyneel/massSpectrometryR
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Suggests: 
     rmarkdown,
     knitr,

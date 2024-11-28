@@ -12,7 +12,7 @@ digested. Note: the letters in sequence will be changed to upper case.}
 
 \item{enzyme}{character string specifying the enzyme to be used for the
 digestion. Default is 'trypsin'. Other options are 'trypsin.strict', 'pepsin',
-'chymotrypsin' and 'chymotrypsin.strict'}
+'chymotrypsin','chymotrypsin.strict' and 'Glu-C'}
 
 \item{missed}{integer vector: the maximum number of allowed missed cleavages}
 }

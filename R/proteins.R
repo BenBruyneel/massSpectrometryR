@@ -38,7 +38,7 @@ peptideFragments <- function(){
 #'  digested. Note: the letters in sequence will be changed to upper case.
 #' @param enzyme character string specifying the enzyme to be used for the
 #'  digestion. Default is 'trypsin'. Other options are 'trypsin.strict', 'pepsin',
-#'  'chymotrypsin' and 'chymotrypsin.strict'
+#'  'chymotrypsin','chymotrypsin.strict' and 'Glu-C'
 #' @param missed integer vector: the maximum number of allowed missed cleavages
 #'
 #' @return data.frame with the columns 'peptide', 'start', 'stop' and 'mc'
@@ -49,7 +49,10 @@ peptideFragments <- function(){
 #'  the package 'OrgMassSpecR'
 digest <- function(sequence, enzyme = "trypsin", missed = 0){
 
-    ## determine cleavage sites according to enzyme specific rules
+  # need to re-do function to streamline it
+
+  ## determine cleavage sites according to enzyme specific rules
+
   seq_vector <- strsplit(sequence, split = "")[[1]]
   end_position <- length(seq_vector)
 
@@ -119,8 +122,20 @@ digest <- function(sequence, enzyme = "trypsin", missed = 0){
             stop <- grep("F|Y|W", seq_vector)
             start <- stop + 1
           } else {
-            warning(paste(c("Enzyme ",enzyme," not defined"), collapse = ""))
-            return(NA)
+            if (enzyme == "Glu-C"){
+              if (seq_vector[end_position] %in% c("D","E")){
+                seq_vector[end_position] <- "!"
+                seq_string <- paste(seq_vector, collapse = "")
+              } else {
+                seq_string <- sequence
+              }
+              seq_vector <- strsplit(seq_string, split = "")[[1]]
+              stop <- grep("D|E", seq_vector)
+              start <- stop + 1
+            } else {
+              warning(paste(c("Enzyme ",enzyme," not defined"), collapse = ""))
+              return(NA)
+            }
           }
         }
       }
@@ -131,6 +146,7 @@ digest <- function(sequence, enzyme = "trypsin", missed = 0){
     warning("sequence does not contain cleavage sites")
     return(NA)
   }
+
   if(missed > length(stop)){
     warning("number of specified missed cleavages is greater than the maximum possible")
     return(NA)
@@ -160,8 +176,6 @@ digest <- function(sequence, enzyme = "trypsin", missed = 0){
   }
   return(results)
 }
-
-
 
 # ---- general - calculations ----
 
