@@ -15,7 +15,7 @@ mzHToMass(mz, charge = 1, elementsInfo = elementsMonoisotopic())
 elements, default is elementsMonoisotopic()}
 }
 \value{
-nuemric vector
+numeric vector
 }
 \description{
 a wrapper around \code{\link{mzToMass}} for positively charged,

@@ -630,7 +630,7 @@ mzToMass <- function(mz, adducts = 0, adductFormula = electronFormula(), adductC
 #' @param elementsInfo elements masses to be used, needs to be of class
 #'  elements, default is elementsMonoisotopic()
 #'
-#' @return nuemric vector
+#' @return numeric vector
 #' @export
 #'
 #' @examples
@@ -640,6 +640,70 @@ mzHToMass <- function(mz, charge = 1, elementsInfo = elementsMonoisotopic()){
   mzToMass(mz = mz, adducts = charge,
            adductFormula = protonFormula(), adductCharge = 1,
            elementsInfo = elementsInfo)
+}
+
+# ---- ppm mass deviation calculations ----
+
+#' @title calculate.ppm
+#'
+#' @description calculates the mass deviation in ppm (parts per million) between
+#'  the measured mass or m/z and a reference mass or m/z (both in Da).
+#'
+#' @param referenceMz reference mass or m/z in Da. Usually a theoretical mass
+#'  calculated from a formula
+#' @param measuredMz measured mass or mz in Da.
+#'
+#' @returns a numeric vector
+#' @export
+#'
+#' @examples
+#' calculate.ppm(465.6025, 465.6028)
+#' calculate.ppm(465.6025, 465.6025)
+#' calculate.ppm(465.6025, 465.7025)
+calculate.ppm <- function(referenceMz, measuredMz){
+  return(((measuredMz-referenceMz)/referenceMz)*1E6)
+}
+
+#' @title calculate.Measured.mz
+#'
+#' @description calculates the mass (Da) when it deviates a certain ppm (part
+#'  per million) from the reference mass (Da).
+#'
+#' @param referenceMz reference mass or m/z in Da. Usually a theoretical mass
+#'  calculated from a formula
+#' @param ppm deviation (in ppm) from the reference mass
+#'
+#' @returns a numeric vector
+#' @export
+#'
+#' @examples
+#' calculate.Measured.mz(465.6025, 5)
+#' calculate.Measured.mz(465.6025, 0)
+#' calculate.Measured.mz(465.6025, -5)
+calculate.Measured.mz <- function(referenceMz, ppm){
+  return(((ppm+1E6)/1E6)*referenceMz)
+}
+
+#' @title calculate.Reference.mz
+#'
+#' @description calculate the reference mass (Da) from a maesured mass (Da)
+#'  which deviates a certain amount (ppm). Somewhat odd calculation, that is
+#'  usually not needed in the lab, but is sometimes needed in theoretical
+#'  situations or in programming.
+#'
+#' @param measuredMz measured mass or m/z in Da.
+#' @param ppm deviation (in ppm) that measuredMz differs from the reference mass
+#'  to be calculated
+#'
+#' @returns a numeric vector
+#' @export
+#'
+#' @examples
+#' calculate.ppm(465.6025, 465.6028)
+#' calculate.Measured.mz(465.6025, 0.644)
+#' calculate.Reference.mz(465.6028, 0.644)
+calculate.Reference.mz <- function(measuredMz, ppm){
+  return((measuredMz*1E6)/(1E6+ppm))
 }
 
 # ---- translations from and to different formats ----
