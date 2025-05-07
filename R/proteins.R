@@ -48,14 +48,14 @@ peptideFragments <- function(){
 #' @note This function is an modified version of the Digest function found in
 #'  the package 'OrgMassSpecR'
 digest <- function(sequence, enzyme = "trypsin", missed = 0){
-  
+
   # need to re-do function to streamline it
-  
+
   ## determine cleavage sites according to enzyme specific rules
-  
+
   seq_vector <- strsplit(sequence, split = "")[[1]]
   end_position <- length(seq_vector)
-  
+
   if(enzyme == "trypsin") {
     if(seq_vector[end_position] == "K" | seq_vector[end_position] == "R") {
       seq_vector[end_position] <- "!"
@@ -141,17 +141,17 @@ digest <- function(sequence, enzyme = "trypsin", missed = 0){
       }
     }
   }
-  
+
   if(length(stop) == 0){
     warning("sequence does not contain cleavage sites")
     return(NA)
   }
-  
+
   if(missed > length(stop)){
     warning("number of specified missed cleavages is greater than the maximum possible")
     return(NA)
   }
-  
+
   ## cleave sequence
   cleave <- function(sequence, start, stop, misses) {
     peptide <- substring(sequence, start, stop)
@@ -159,12 +159,12 @@ digest <- function(sequence, enzyme = "trypsin", missed = 0){
     result <- data.frame(peptide, start, stop, mc, stringsAsFactors = FALSE)
     return(result)
   }
-  
+
   # peptides if 0 missed cleavages
   start <- c(1, start)
   stop <- c(stop, end_position)
   results <- cleave(sequence, start, stop, 0)
-  
+
   # peptides if missed cleavages > 0
   if(missed > 0) {
     for(i in 1:missed) {
@@ -677,7 +677,7 @@ peptide <- R6Class("peptide",
                          lossFormula <- emptyFormula()
                          temporaryMods <- self$modifications.part(startSeq,endSeq)
                          # fixed modifications
-                         tempT <- self$modificationsTable$table %>% dplyr::filter(fixed)
+                         tempT <- self$modificationsTable %>% dplyr::filter(fixed)
                          if (nrow(tempT)>0){
                            for (counter in 1:nrow(tempT)){
                              if (tempT$position[counter] %in% c("C_term","N_term")){
@@ -712,7 +712,7 @@ peptide <- R6Class("peptide",
                            }
                          }
                          # variable modifications
-                         tempT <- self$modificationsTable$table %>% dplyr::filter(!fixed)
+                         tempT <- self$modificationsTable %>% dplyr::filter(!fixed)
                          for (counter in 1:nchar(temporarySequence)){
                            currentChar <- substr(temporaryMods,counter,counter)
                            if (currentChar != "0"){
@@ -786,7 +786,7 @@ peptide <- R6Class("peptide",
                        #temporarymods <- self$modifications.part(startSeq, endSeq)
                        temporaryFormula <- peptideFormula(temporary)
                        if ((!ignoreModifications) &
-                           (!identical(private$modificationTable,NA))){
+                           (!identical(self$modificationsTable,NA))){
                          modsPresent <- self$modifications.formula.part(startSeq,
                                                                         endSeq,
                                                                         Nterminal = Nterminal,
@@ -886,7 +886,7 @@ peptide <- R6Class("peptide",
                                                 Nterminal = Nterminal,
                                                 Cterminal = Cterminal) |>
                                 formulaToMass(elementsInfo = elementsInfo))
-                       
+
                      },
                      #' @description
                      #' Calculate the m/z of part of the peptide (as an ion)
@@ -1357,7 +1357,7 @@ peptide <- R6Class("peptide",
                        } else {
                          # do nothing
                        }
-                       
+
                      },
                      #' @field modifications returns the moficiations string,
                      #'  can be set but is not checked agains the length of the
