@@ -547,7 +547,10 @@ peptide <- R6Class("peptide",
                      #'  sequence of the peptide
                      #' @param modificationTable the table from a
                      #'  R6 'modifications' object containing the variable and
-                     #'  fixed modifications present in the amino acid sequence
+                     #'  fixed modifications present in the amino acid sequence.
+                     #'  Important: do NOT pass on an R6 modifications object,
+                     #'  the function can use a table from such an object, but
+                     #'  not the object itself!
                      #' @param variableModifications character vector specifying
                      #'  the position of variable modifications. The length of
                      #'  this vector must be the same length as the sequence.
@@ -574,6 +577,7 @@ peptide <- R6Class("peptide",
                        }
                        if (!identical(modificationTable, NA)){
                          stopifnot(nchar(variableModifications) == nchar(sequence))
+                         stopifnot(is.Class(modificationTable, "data.frame"))
                          private$modificationTable <- modificationTable
                          private$variableModifications <- variableModifications
                        }

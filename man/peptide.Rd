@@ -77,7 +77,10 @@ sequence of the peptide}
 
 \item{\code{modificationTable}}{the table from a
 R6 'modifications' object containing the variable and
-fixed modifications present in the amino acid sequence}
+fixed modifications present in the amino acid sequence.
+Important: do NOT pass on an R6 modifications object,
+the function can use a table from such an object, but
+not the object itself!}
 
 \item{\code{variableModifications}}{character vector specifying
 the position of variable modifications. The length of
