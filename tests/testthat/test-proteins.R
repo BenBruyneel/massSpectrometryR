@@ -89,51 +89,51 @@ test_that("peptide class works",{
                "402.20764")
   expect_equal(format(sum(tester$fragments()$bions),
                       digits = 8, nsmall = 4),
-               "2919.3244")
+               "2117.9320")
   expect_equal(format(sum(tester$fragments(ignoreModifications = TRUE)$bions),
                       digits = 8, nsmall = 4),
-               "2839.3498")
+               "2053.9523")
   expect_equal(format(sum(tester$fragments()$aions),
                       digits = 8, nsmall = 4),
-               "2723.3600")
+               "1949.9625")
   expect_equal(format(sum(tester$fragments()$aionsH2O),
                       digits = 8, nsmall = 4),
-               "2597.2860")
+               "1841.8991")
   expect_equal(format(sum(tester$fragments()$aionsNH3),
                       digits = 8, nsmall = 4),
-               "2604.1741")
+               "1847.8032")
   expect_equal(format(sum(tester$fragments()$bions),
                       digits = 8, nsmall = 4),
-               "2919.3244")
+               "2117.9320")
   expect_equal(format(sum(tester$fragments()$bionsH2O),
                       digits = 8, nsmall = 4),
-               "2793.2504")
+               "2009.8686")
   expect_equal(format(sum(tester$fragments()$bionsNH3),
                       digits = 8, nsmall = 4),
-               "2800.1385")
+               "2015.7727")
   expect_equal(format(sum(tester$fragments()$bionsH2Oadd),
                       digits = 8, nsmall = 4),
-               "3045.3983")
+               "2225.9954")
   expect_equal(format(sum(tester$fragments()$cions),
                       digits = 8, nsmall = 4),
-               "3038.5102")
+               "2220.0913")
   expect_equal(format(sum(tester$fragments()$xions),
                       digits = 8, nsmall = 4),
-               "3805.7869")
+               "2960.4047")
   expect_equal(format(sum(tester$fragments()$yions),
                       digits = 8, nsmall = 4),
-               "3623.9321")
+               "2804.5291")
   expect_equal(format(sum(tester$fragments()$yionsH2O),
                       digits = 8, nsmall = 4),
-               "3497.8581")
+               "2696.4658")
   expect_equal(format(sum(tester$fragments()$yionsNH3),
                       digits = 8, nsmall = 4),
-               "3504.7462")
+               "2702.3698")
   expect_equal(format(sum(tester$fragments()$zions),
                       digits = 8, nsmall = 4),
-               "3511.8010")
+               "2708.4168")
   expect_equal(addListFormulas(tester$fragments(returnFormulas = TRUE)$yions),
-               c(C=146, H=265, N=49,O=51,S=3))
+               c(C=113, H=207, N=39,O=39,S=2))
   expect_equal(tester$modifications.formula(),
                list(gain = c(C=0, H=0, N= 0, O=1, S=0),
                     loss = c(C=0, H=0, N= 0, O=0, S=0)))
@@ -151,7 +151,7 @@ test_that("peptide class works",{
   expect_equal(format(tester$mass(), digits= 8, nsmall = 4),
                "891.39426")
   expect_equal(addListFormulas(tester$fragments(returnFormulas = TRUE)$yions),
-               c(C=148, H=268, N=50,O=51,S=4))
+               c(C=113, H=207, N=39,O=39,S=2))
 })
 
 test_that("aminoAcidResidues works",{

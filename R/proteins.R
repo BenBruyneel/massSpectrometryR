@@ -1100,12 +1100,18 @@ peptide <- R6Class("peptide",
                        Cterminal <- (endSeq == self$length)
                        pepSeries <- list()
                        thePeptide <- private$peptideString
-                       pepSeries$nTerminal <- rev(unlist(lapply((startSeq - 1):(endSeq-1),function(x){substr(thePeptide,startSeq,endSeq-x)})))
-                       pepSeries$cTerminal <- rev(unlist(lapply(startSeq:endSeq,function(x){substr(thePeptide,x,endSeq)})))
+
+                       pepSeries$nTerminal <- rev(unlist(lapply((startSeq):(endSeq-1),function(x){substr(thePeptide,startSeq,endSeq-x)})))
+                       pepSeries$cTerminal <- rev(unlist(lapply((startSeq+1):endSeq,function(x){substr(thePeptide,x,endSeq)})))
+
+                       # pepSeries$nTerminal <- rev(unlist(lapply((startSeq - 1):(endSeq-1),function(x){substr(thePeptide,startSeq,endSeq-x)})))
+                       # pepSeries$cTerminal <- rev(unlist(lapply(startSeq+1:endSeq,function(x){substr(thePeptide,x,endSeq)})))
                        if (!identical(private$variableModifications,NA) & !ignoreModifications){
                          thePeptide <- private$variableModifications
-                         pepSeries$nVariableMods <- rev(unlist(lapply((startSeq - 1):(endSeq-1),function(x){substr(thePeptide,startSeq,endSeq-x)})))
-                         pepSeries$cVariableMods <- rev(unlist(lapply(startSeq:endSeq,function(x){substr(thePeptide,x,endSeq)})))
+                         pepSeries$nVariableMods <- rev(unlist(lapply((startSeq):(endSeq-1),function(x){substr(thePeptide,startSeq,endSeq-x)})))
+                         pepSeries$cVariableMods <- rev(unlist(lapply((startSeq+1):endSeq,function(x){substr(thePeptide,x,endSeq)})))
+                         # pepSeries$nVariableMods <- rev(unlist(lapply((startSeq - 1):(endSeq-1),function(x){substr(thePeptide,startSeq,endSeq-x)})))
+                         # pepSeries$cVariableMods <- rev(unlist(lapply(startSeq:endSeq,function(x){substr(thePeptide,x,endSeq)})))
                        } else {
                          pepSeries$nVariableMods <- rep(NA,length(pepSeries$nTerminal))
                          pepSeries$cVariableMods <- rep(NA,length(pepSeries$nTerminal))
@@ -1135,32 +1141,32 @@ peptide <- R6Class("peptide",
                        }
                        if (!returnFormulas){
                          # calculate a-ions masses (not m/z's!!)
-                         pepSeries$aions <- unlist(lapply(1:nrow(pepSeries),
+                         pepSeries$aions <- unlist(lapply(1:(nrow(pepSeries)),
                                                           function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(C=1,H=2,O=2)) %>% formulaToMass()})) %>% massToMzH(chargeState)
                          # pepSeries$aions[1] <- NA
                          # pepSeries$aions[nrow(pepSeries)] <- NA
                          # a - H2O
-                         pepSeries$aionsH2O <- unlist(lapply(1:nrow(pepSeries),
+                         pepSeries$aionsH2O <- unlist(lapply(1:(nrow(pepSeries)),
                                                              function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(C=1,H=4,O=3)) %>% formulaToMass()})) %>% massToMzH(chargeState)
                          # a - NH3
-                         pepSeries$aionsNH3 <- unlist(lapply(1:nrow(pepSeries),
+                         pepSeries$aionsNH3 <- unlist(lapply(1:(nrow(pepSeries)),
                                                              function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(C=1,H=5,O=2,N=1)) %>% formulaToMass()})) %>% massToMzH(chargeState)
                          # calculate b-ions masses (not m/z's!!)
-                         pepSeries$bions <- unlist(lapply(1:nrow(pepSeries),
+                         pepSeries$bions <- unlist(lapply(1:(nrow(pepSeries)),
                                                           function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(H=2,O=1)) %>% formulaToMass()})) %>% massToMzH(chargeState)
                          # pepSeries$bions[1] <- NA
                          # pepSeries$bions[nrow(pepSeries)] <- NA
                          # b - H2O
-                         pepSeries$bionsH2O <- unlist(lapply(1:nrow(pepSeries),
+                         pepSeries$bionsH2O <- unlist(lapply(1:(nrow(pepSeries)),
                                                              function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(H=4,O=2)) %>% formulaToMass()})) %>% massToMzH(chargeState)
                          # b - NH3
-                         pepSeries$bionsNH3 <- unlist(lapply(1:nrow(pepSeries),
+                         pepSeries$bionsNH3 <- unlist(lapply(1:(nrow(pepSeries)),
                                                              function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(H=5,O=1,N=1)) %>% formulaToMass()})) %>% massToMzH(chargeState)
                          # b + H2O
-                         pepSeries$bionsH2Oadd <- unlist(lapply(1:nrow(pepSeries),
+                         pepSeries$bionsH2Oadd <- unlist(lapply(1:(nrow(pepSeries)),
                                                                 function(x){pepSeries$nTerminalFormula[[x]] %>% formulaToMass()})) %>% massToMzH(chargeState)
                          # calculate c-ions masses (not m/zs!!)
-                         pepSeries$cions <- unlist(lapply(1:nrow(pepSeries),
+                         pepSeries$cions <- unlist(lapply(1:(nrow(pepSeries)),
                                                           function(x){
                                                             temporary <- subtractFormulas(pepSeries$nTerminalFormula[[x]],c(O=1))
                                                             return(addFormulas(temporary,c(N=1, H=1)) %>% formulaToMass())
@@ -1187,21 +1193,21 @@ peptide <- R6Class("peptide",
                          pepSeries$zions <- unlist(lapply(1:nrow(pepSeries),
                                                           function(x){subtractFormulas(pepSeries$cTerminalFormula[[x]],c(N=1,H=2)) %>% formulaToMass()})) %>% massToMzH(chargeState)
                        } else {
-                         pepSeries$aions <- lapply(1:nrow(pepSeries),
+                         pepSeries$aions <- lapply(1:(nrow(pepSeries)),
                                                    function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(C=1,H=2,O=2))})
-                         pepSeries$aionsH2O <- lapply(1:nrow(pepSeries),
+                         pepSeries$aionsH2O <- lapply(1:(nrow(pepSeries)),
                                                       function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(C=1,H=4,O=3))})
-                         pepSeries$aionsNH3 <- lapply(1:nrow(pepSeries),
+                         pepSeries$aionsNH3 <- lapply(1:(nrow(pepSeries)),
                                                       function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(C=1,H=5,O=2,N=1))})
-                         pepSeries$bions <- lapply(1:nrow(pepSeries),
+                         pepSeries$bions <- lapply(1:(nrow(pepSeries)),
                                                    function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(H=2,O=1))})
-                         pepSeries$bionsH2O <- lapply(1:nrow(pepSeries),
+                         pepSeries$bionsH2O <- lapply(1:(nrow(pepSeries)),
                                                       function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(H=4,O=2))})
-                         pepSeries$bionsNH3 <- lapply(1:nrow(pepSeries),
+                         pepSeries$bionsNH3 <- lapply(1:(nrow(pepSeries)),
                                                       function(x){subtractFormulas(pepSeries$nTerminalFormula[[x]],c(H=5,O=1,N=1))})
-                         pepSeries$bionsH2Oadd <- lapply(1:nrow(pepSeries),
+                         pepSeries$bionsH2Oadd <- lapply(1:(nrow(pepSeries)),
                                                          function(x){pepSeries$nTerminalFormula[[x]]})
-                         pepSeries$cions <- lapply(1:nrow(pepSeries),
+                         pepSeries$cions <- lapply(1:(nrow(pepSeries)),
                                                    function(x){
                                                      temporary <- subtractFormulas(pepSeries$nTerminalFormula[[x]],c(O=1))
                                                      return(addFormulas(temporary,c(N=1, H=1)))
