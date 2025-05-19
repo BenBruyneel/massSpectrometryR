@@ -338,7 +338,12 @@ modifications <- R6Class("modifications",
                          private = list(
                            # table has 6 columns or is completely empty, see
                            # description & examples
-                           modificationTable = tibble::tibble()
+                           modificationTable = tibble::tibble(name = as.character(),
+                                                              position = as.character(),
+                                                              fixed = as.logical(),
+                                                              gain = list(),
+                                                              loss = list(),
+                                                              category = as.character())
                          ),
                          public = list(
                            #' @description
