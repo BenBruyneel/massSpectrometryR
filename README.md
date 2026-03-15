@@ -1,7 +1,7 @@
 # massSpectrometryR
 
 R Package that contains a number of utilities for mass spectrometry.
-Currently (version 0.6.1) the package mainly deals with calculations.
+Currently (version 0.6.2) the package mainly deals with calculations.
 
 Note: The package currently uses the isotopes data (original: https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl) & the isopattern function from the enviPat package for correct average mass calculations.
 
@@ -13,4 +13,4 @@ devtools::install_github("BenBruyneel/massSpectrometryR")
 
 Work in progress!
 
-May, 15th 2025
+March, 15th 2026

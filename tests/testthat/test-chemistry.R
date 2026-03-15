@@ -220,6 +220,9 @@ test_that("stringToFormula works",{
                c(C=6, H=12, O= 6))
   glucIsotope <- c(C=5, c13 = 1, H = 12, O18 = 1, O= 5)
   names(glucIsotope)[c(2,4)] <- c("[13]C", "[18]O")
+  expect_equal(stringToFormula("C5[13]C1H12[18]O1O5", removeCharacters = NA),
+               glucIsotope)
+  names(glucIsotope)[c(2,4)] <- c("13C", "18O")
   expect_equal(stringToFormula("C5[13]C1H12[18]O1O5"),
                glucIsotope)
 })

@@ -816,6 +816,10 @@ stringFormula <- function(string){
 #'  allows for the presence of isotopes, eg '[13]C' or '[2]H2O'
 #'
 #' @param string character vector, format eg: 'C6H12O6'
+#' @param removeCharacters character vector. Defines what (which characters)
+#'  should be removed from the element names. Regular expressions can be used.
+#'  Default is removal of brackets used for isoptopes. If NA, then nothing will
+#'  be removed, see examples
 #'
 #' @return formula of format c(H=2, O=1)
 #' @export
@@ -825,11 +829,12 @@ stringFormula <- function(string){
 #' stringToFormula("C6H12O6")
 #' stringToFormula("C6H5Br")
 #' stringToFormula("[13]C6H12O5[18]O")
-stringToFormula <- function(string){
-  if (nchar(string)==0){
-    return(emptyFormula())
-  }
+#' stringToFormula("[13]C6H12O5[18]O", removeCharacters = NA)
+stringToFormula <- function(string, removeCharacters = c("\\[", "\\]")){
   if (length(string)==1){
+    if (nchar(string)==0){
+      return(emptyFormula())
+    }
     findElements <- stringr::str_locate_all(string,
                                             pattern = "(\\[{0,1}[:digit:]+\\]{0,1}){0,1}[:upper:]{1}[:lower:]{0,1}\\d*")[[1]]
     result <- as.numeric()
@@ -842,6 +847,13 @@ stringToFormula <- function(string){
         result[counter] <- 1
       }
       names(result)[counter] <- stringr::str_extract(tempStr, pattern = ".*[:alpha:]+")
+      if (!identical(removeCharacters, NA)){
+        for (removeCounter in 1:length(removeCharacters)){
+          names(result)[counter] <- stringr::str_remove_all(names(result)[counter],
+                                                            pattern = removeCharacters[removeCounter])
+        }
+
+      }
     }
     return(result)
   }

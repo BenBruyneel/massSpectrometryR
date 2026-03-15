@@ -5,10 +5,15 @@
 \title{Translates a character vector formula, eg 'C6H12O6' to a regular
  formula c(C=6, H=12, O=6)}
 \usage{
-stringToFormula(string)
+stringToFormula(string, removeCharacters = c("\\\\[", "\\\\]"))
 }
 \arguments{
 \item{string}{character vector, format eg: 'C6H12O6'}
+
+\item{removeCharacters}{character vector. Defines what (which characters)
+should be removed from the element names. Regular expressions can be used.
+Default is removal of brackets used for isoptopes. If NA, then nothing will
+be removed, see examples}
 }
 \value{
 formula of format c(H=2, O=1)
@@ -28,4 +33,5 @@ stringToFormula("H3O4P1")
 stringToFormula("C6H12O6")
 stringToFormula("C6H5Br")
 stringToFormula("[13]C6H12O5[18]O")
+stringToFormula("[13]C6H12O5[18]O", removeCharacters = NA)
 }
