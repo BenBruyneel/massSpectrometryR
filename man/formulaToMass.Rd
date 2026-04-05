@@ -31,7 +31,7 @@ complicated isotope patterns) it's highly recommended to use enviPat = TRUE
 with exact = FALSE}
 
 \item{exact}{determines if the exact (TRUE, default) or the average (FALSE)
-mass is calculated (ignored if enviPat is FALSE)#'}
+mass is calculated (ignored if enviPat is FALSE)}
 }
 \value{
 numeric vector

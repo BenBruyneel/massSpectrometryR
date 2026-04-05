@@ -9,7 +9,9 @@ mzToMass(
   adducts = 0,
   adductFormula = electronFormula(),
   adductCharge = -1,
-  elementsInfo = elementsMonoisotopic()
+  elementsInfo = elementsMonoisotopic(),
+  enviPat = FALSE,
+  exact = TRUE
 )
 }
 \arguments{
@@ -24,6 +26,15 @@ from' the (originally neutral) molecule}
 
 \item{elementsInfo}{elements masses to be used, needs to be of class
 elements, default is elementsMonoisotopic()}
+
+\item{enviPat}{logical argument that determines if the enviPat based
+calculations should be used. Default is FALSE. For monoisotopoc masses
+there is no difference, but for average masses of larger molecules (with
+complicated isotope patterns) it's highly recommended to use enviPat = TRUE
+with exact = FALSE}
+
+\item{exact}{determines if the exact (TRUE, default) or the average (FALSE)
+mass is calculated (ignored if enviPat is FALSE)}
 }
 \value{
 numeric vector

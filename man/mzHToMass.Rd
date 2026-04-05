@@ -4,7 +4,13 @@
 \alias{mzHToMass}
 \title{calculates the mass of the molecule in an ion (M+xH)x+}
 \usage{
-mzHToMass(mz, charge = 1, elementsInfo = elementsMonoisotopic())
+mzHToMass(
+  mz,
+  charge = 1,
+  elementsInfo = elementsMonoisotopic(),
+  enviPat = FALSE,
+  exact = TRUE
+)
 }
 \arguments{
 \item{mz}{numeric vector, mass to charge ratio of he ion}
@@ -13,6 +19,15 @@ mzHToMass(mz, charge = 1, elementsInfo = elementsMonoisotopic())
 
 \item{elementsInfo}{elements masses to be used, needs to be of class
 elements, default is elementsMonoisotopic()}
+
+\item{enviPat}{logical argument that determines if the enviPat based
+calculations should be used. Default is FALSE. For monoisotopoc masses
+there is no difference, but for average masses of larger molecules (with
+complicated isotope patterns) it's highly recommended to use enviPat = TRUE
+with exact = FALSE}
+
+\item{exact}{determines if the exact (TRUE, default) or the average (FALSE)
+mass is calculated (ignored if enviPat is FALSE)}
 }
 \value{
 numeric vector

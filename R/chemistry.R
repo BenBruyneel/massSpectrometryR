@@ -436,7 +436,7 @@ validFormula <- function(formula, string = FALSE){
 #'  complicated isotope patterns) it's highly recommended to use enviPat = TRUE
 #'  with exact = FALSE
 #' @param exact determines if the exact (TRUE, default) or the average (FALSE)
-#'  mass is calculated (ignored if enviPat is FALSE)#'
+#'  mass is calculated (ignored if enviPat is FALSE)
 #'
 #' @return numeric vector
 #' @export
@@ -506,6 +506,13 @@ formulaToMass <- function(formula = NULL, removeNA = FALSE,
 #' @param adductCharge numeric vector indicating the actual charge per adduct
 #' @param elementsInfo elements masses to be used, needs to be of class
 #'  elements, default is elementsMonoisotopic()
+#' @param enviPat logical argument that determines if the enviPat based
+#'  calculations should be used. Default is FALSE. For monoisotopoc masses
+#'  there is no difference, but for average masses of larger molecules (with
+#'  complicated isotope patterns) it's highly recommended to use enviPat = TRUE
+#'  with exact = FALSE
+#' @param exact determines if the exact (TRUE, default) or the average (FALSE)
+#'  mass is calculated (ignored if enviPat is FALSE)
 #'
 #' @return numeric vector
 #' @export
@@ -541,16 +548,20 @@ formulaToMass <- function(formula = NULL, removeNA = FALSE,
 #'          adductFormula = electronFormula(),
 #'          adductCharge = 1)
 massToMz <- function(mass, adducts = 0, adductFormula = electronFormula(),
-                     adductCharge = -1, elementsInfo = elementsMonoisotopic()){
+                     adductCharge = -1, elementsInfo = elementsMonoisotopic(),
+                     enviPat = FALSE, exact = TRUE){
   if (adducts == 0){
     return(mass)
   } else {
-    massIon <- mass + (adducts * formulaToMass(adductFormula, elementsInfo = elementsInfo))
+    massIon <- mass + (adducts * formulaToMass(adductFormula,
+                                               elementsInfo = elementsInfo,
+                                               enviPat = enviPat, exact = exact))
     # if charger is not an electron, then the (charge * mass(electron)) needs
     # to to be added/subtracted
     if (!identical(adductFormula,electronFormula())){
       massIon <- massIon - (abs(adductCharge) * adducts * formulaToMass(electronFormula(),
-                                                                        elementsInfo = elementsInfo))
+                                                                        elementsInfo = elementsInfo,
+                                                                        enviPat = enviPat, exact = exact))
     }
     mz <- massIon / (abs(adducts * adductCharge))
     return(mz)
@@ -567,6 +578,13 @@ massToMz <- function(mass, adducts = 0, adductFormula = electronFormula(),
 #' @param charge charge state
 #' @param elementsInfo elements masses to be used, needs to be of class
 #'  elements, default is elementsMonoisotopic()
+#' @param enviPat logical argument that determines if the enviPat based
+#'  calculations should be used. Default is FALSE. For monoisotopoc masses
+#'  there is no difference, but for average masses of larger molecules (with
+#'  complicated isotope patterns) it's highly recommended to use enviPat = TRUE
+#'  with exact = FALSE
+#' @param exact determines if the exact (TRUE, default) or the average (FALSE)
+#'  mass is calculated (ignored if enviPat is FALSE)
 #'
 #' @return numeric vector
 #' @export
@@ -582,10 +600,12 @@ massToMz <- function(mass, adducts = 0, adductFormula = electronFormula(),
 #'          adductFormula = protonFormula(),
 #'          adductCharge = 1)
 #' massToMzH(lysineMass)
-massToMzH <- function(mass, charge = 1, elementsInfo = elementsMonoisotopic()){
+massToMzH <- function(mass, charge = 1, elementsInfo = elementsMonoisotopic(),
+                      enviPat = FALSE, exact = TRUE){
   massToMz(mass, adducts = charge,
            adductFormula = protonFormula(), adductCharge = 1,
-           elementsInfo = elementsInfo)
+           elementsInfo = elementsInfo,
+           enviPat = enviPat, exact = exact)
 }
 
 
@@ -600,6 +620,13 @@ massToMzH <- function(mass, charge = 1, elementsInfo = elementsMonoisotopic()){
 #' @param adductCharge numeric vector indicating the actual charge per adduct
 #' @param elementsInfo elements masses to be used, needs to be of class
 #'  elements, default is elementsMonoisotopic()
+#' @param enviPat logical argument that determines if the enviPat based
+#'  calculations should be used. Default is FALSE. For monoisotopoc masses
+#'  there is no difference, but for average masses of larger molecules (with
+#'  complicated isotope patterns) it's highly recommended to use enviPat = TRUE
+#'  with exact = FALSE
+#' @param exact determines if the exact (TRUE, default) or the average (FALSE)
+#'  mass is calculated (ignored if enviPat is FALSE)
 #'
 #' @return numeric vector
 #' @export
@@ -609,13 +636,18 @@ massToMzH <- function(mass, charge = 1, elementsInfo = elementsMonoisotopic()){
 #'  mzToMass(adductFormula = c(e=1), adducts = 2, adductCharge = -1)
 #' massToMz(mass = 174.1117, adductFormula = c(H=1), adducts = 1, adductCharge = 1) |>
 #'  mzToMass(adductFormula = c(H=1), adducts = 1, adductCharge = 1)
-mzToMass <- function(mz, adducts = 0, adductFormula = electronFormula(), adductCharge = -1, elementsInfo = elementsMonoisotopic()){
+mzToMass <- function(mz, adducts = 0, adductFormula = electronFormula(),
+                     adductCharge = -1, elementsInfo = elementsMonoisotopic(),
+                     enviPat = FALSE, exact = TRUE){
   # deduct adducts
-  result <- (mz * adducts * abs(adductCharge)) - (adducts * formulaToMass(adductFormula, elementsInfo = elementsInfo))
+  result <- (mz * adducts * abs(adductCharge)) - (adducts * formulaToMass(adductFormula,
+                                                                          elementsInfo = elementsInfo,
+                                                                          enviPat = enviPat, exact = exact))
   # if charger is not electron
   if (!identical(adductFormula,electronFormula())){
     result <- result + (abs(adductCharge) * adducts * formulaToMass(electronFormula(),
-                                                                    elementsInfo = elementsInfo))
+                                                                    elementsInfo = elementsInfo,
+                                                                    enviPat = enviPat, exact = exact))
   }
   return(result)
 }
@@ -629,17 +661,25 @@ mzToMass <- function(mz, adducts = 0, adductFormula = electronFormula(), adductC
 #' @param charge charge state
 #' @param elementsInfo elements masses to be used, needs to be of class
 #'  elements, default is elementsMonoisotopic()
-#'
+#' @param enviPat logical argument that determines if the enviPat based
+#'  calculations should be used. Default is FALSE. For monoisotopoc masses
+#'  there is no difference, but for average masses of larger molecules (with
+#'  complicated isotope patterns) it's highly recommended to use enviPat = TRUE
+#'  with exact = FALSE
+#' @param exact determines if the exact (TRUE, default) or the average (FALSE)
+#'  mass is calculated (ignored if enviPat is FALSE)
 #' @return numeric vector
 #' @export
 #'
 #' @examples
 #'  massToMzH(mass = 174.1117, charge = 2) |> mzHToMass(charge = 2)
 #'  massToMzH(mass = 174.1117, charge = 1) |> mzHToMass(charge = 1)
-mzHToMass <- function(mz, charge = 1, elementsInfo = elementsMonoisotopic()){
+mzHToMass <- function(mz, charge = 1, elementsInfo = elementsMonoisotopic(),
+                      enviPat = FALSE, exact = TRUE){
   mzToMass(mz = mz, adducts = charge,
            adductFormula = protonFormula(), adductCharge = 1,
-           elementsInfo = elementsInfo)
+           elementsInfo = elementsInfo,
+           enviPat = enviPat, exact = exact)
 }
 
 # ---- ppm mass deviation calculations ----
