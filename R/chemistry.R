@@ -463,7 +463,7 @@ formulaToMass <- function(formula = NULL, removeNA = FALSE,
     if (length(formula) == 0){
       return(0)
     }
-    if (!enviPat){
+    if (!enviPat | identical(formula, electronFormula())){
       # do not calculate via enviPat
       return(sum(unlist(lapply(names(formula),function(x){elementsInfo$getMass(x)})) * formula))
     } else {
