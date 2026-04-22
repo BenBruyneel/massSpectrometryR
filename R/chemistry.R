@@ -476,7 +476,7 @@ formulaToMass <- function(formula = NULL, removeNA = FALSE,
           suppressMessages(
             result <- enviPat::isopattern(isotopes = isotopes,
                                           chemforms = formula |> formulaString(),
-                                          threshold = 0.01,
+                                          threshold = 0.00001,
                                           plotit = FALSE,
                                           verbose = FALSE)[[1]]
           )
